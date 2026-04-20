@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>수리나무학원 스마트 학습 - Basic Grammar (be동사)</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         /* 🌳 수리나무학원 전용 컬러 팔레트 */
         :root {
@@ -17,7 +18,7 @@
 
         body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; text-align: center; background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--text-dark); }
         
-        #app-container { max-width: 480px; margin: 0 auto; background: white; border-radius: 24px; box-shadow: var(--box-shadow); overflow: hidden; padding-bottom: 30px;}
+        #app-container { max-width: 480px; margin: 0 auto; background: white; border-radius: 24px; box-shadow: var(--box-shadow); overflow: hidden; padding-bottom: 30px; position: relative;}
         
         /* 헤더 스타일 */
         .app-header { background: linear-gradient(135deg, var(--main-green), #276749); color: white; padding: 35px 20px 25px; text-align: center; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(47, 133, 90, 0.4);}
@@ -26,7 +27,7 @@
         .logo-icon { font-size: 45px; margin-bottom: 5px; text-shadow: 0 4px 10px rgba(0,0,0,0.2);}
 
         .nav-container { padding: 0 15px; display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-bottom: 25px; }
-        .menu-btn { flex: 1; min-width: 65px; padding: 12px 5px; cursor: pointer; border: none; border-radius: 12px; background-color: #EDF2F7; color: #4A5568; font-weight: bold; font-size: 13px; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
+        .menu-btn { flex: 1; min-width: 60px; padding: 12px 2px; cursor: pointer; border: none; border-radius: 12px; background-color: #EDF2F7; color: #4A5568; font-weight: bold; font-size: 13px; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
         .menu-btn:hover { background-color: #E2E8F0; transform: translateY(-2px); }
         .menu-btn.active { background-color: var(--main-green); color: white; box-shadow: 0 4px 10px rgba(47, 133, 90, 0.3); }
         
@@ -60,33 +61,10 @@
         @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
 
         /* 딕테이션 스타일 */
-        .word-block { 
-            display: inline-block; background-color: white; margin: 5px; padding: 12px 18px; 
-            border: 2px solid #CBD5E0; border-radius: 12px; cursor: pointer; font-size: 16px; 
-            font-weight: bold; color: var(--text-dark); box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-            transition: background-color 0.2s, box-shadow 0.2s, color 0.2s; 
-            touch-action: manipulation; user-select: none;
-        }
+        .word-block { display: inline-block; background-color: white; margin: 5px; padding: 12px 18px; border: 2px solid #CBD5E0; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; color: var(--text-dark); box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: background-color 0.2s, box-shadow 0.2s, color 0.2s; touch-action: manipulation; user-select: none; }
         .word-block:active { transform: translateY(2px); box-shadow: none; }
-        
-        /* 드래그 앤 드롭 시각 효과 */
-        .sortable-ghost { 
-            opacity: 0.4; 
-            background-color: #EDF2F7 !important; 
-            border: 2px dashed #A0AEC0 !important; 
-            color: transparent !important;
-            transform: scale(0.95);
-        }
-        .sortable-drag { 
-            cursor: grabbing !important; 
-            background-color: var(--main-green) !important; 
-            color: white !important;
-            box-shadow: 0 15px 25px rgba(47, 133, 90, 0.3) !important; 
-            transform: scale(1.05) !important; 
-            opacity: 1 !important;
-            border: 2px solid var(--light-green) !important;
-        }
-        
+        .sortable-ghost { opacity: 0.4; background-color: #EDF2F7 !important; border: 2px dashed #A0AEC0 !important; color: transparent !important; transform: scale(0.95); }
+        .sortable-drag { cursor: grabbing !important; background-color: var(--main-green) !important; color: white !important; box-shadow: 0 15px 25px rgba(47, 133, 90, 0.3) !important; transform: scale(1.05) !important; opacity: 1 !important; border: 2px solid var(--light-green) !important; }
         #answer-area { min-height: 60px; border: 2px dashed var(--main-green); background-color: var(--bg-color); margin-bottom: 10px; padding: 15px; border-radius: 15px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; transition: all 0.3s; }
         #scrambled-words { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; min-height: 50px;}
         .korean-meaning { font-size: 18px; color: #C53030; font-weight: bold; margin: 15px 0 25px 0; background-color: #FFF5F5; padding: 15px; border-radius: 12px; word-break: keep-all; border-left: 5px solid #F56565; text-align: left;}
@@ -101,7 +79,6 @@
         .grammar-chunks { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
         .chunk-card { border: 2px solid #CBD5E0; border-radius: 10px; min-width: 70px; background: white; cursor: pointer; overflow: hidden; transition: 0.2s;}
         .chunk-card.active { border-color: #3182CE; box-shadow: 0 0 8px rgba(49,130,206,0.3); transform: translateY(-2px);}
-        .chunk-card.correct { border-color: var(--light-green); background: #F0FDF4; pointer-events: none;}
         .chunk-txt { padding: 8px; font-size: 15px; font-weight: bold; background: #F7FAFC; border-bottom: 1px dashed #E2E8F0; }
         .chunk-ans { padding: 6px; font-size: 13px; font-weight: 800; color: #A0AEC0; height: 18px; }
         .choice-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
@@ -117,18 +94,29 @@
         .pattern-title { font-size: 20px; color: #C53030; font-weight: 900; margin-bottom: 12px; }
         .pattern-desc { font-size: 20px; color: #E53E3E; font-weight: 900; word-break: keep-all; line-height: 1.4;}
 
-        /* 기록 스타일 */
+        /* 기록 & 오답노트 스타일 */
         .history-card { background: white; border: 2px solid #E2E8F0; border-radius: 12px; padding: 15px; margin-bottom: 12px; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center;}
         .history-info { display: flex; flex-direction: column; gap: 5px; }
         .history-date { font-size: 14px; font-weight: bold; color: #718096; }
         .history-score { font-size: 20px; font-weight: 900; color: var(--main-green); }
         .stamp-excellent { color: #E53E3E; font-weight: 900; font-size: 18px; transform: rotate(-10deg); border: 3px solid #E53E3E; padding: 4px 10px; border-radius: 10px; opacity: 0.9;}
         .history-category { background: #EDF2F7; padding: 8px 12px; border-radius: 8px; font-size: 14px; font-weight: bold; margin-bottom: 15px; margin-top: 20px; color: #2D3748; text-align: left; border-left: 4px solid #4A5568;}
+        
+        .wrong-word-item { display: flex; justify-content: space-between; align-items: center; background: #FFF5F5; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; border-left: 4px solid #FC8181; }
+        .wrong-en { font-weight: 900; font-size: 18px; color: #C53030; }
+        .wrong-ko { font-weight: 600; font-size: 14px; color: #4A5568; }
+        .delete-btn { background: #EDF2F7; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; color: #718096; font-weight: bold; font-size: 12px; }
+
+        /* 콤보 애니메이션 */
+        #combo-display { position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(0.5); font-size: 3.5rem; font-weight: 900; color: #DD6B20; text-shadow: 0 4px 15px rgba(221, 107, 32, 0.4), 2px 2px 0px #FFF; opacity: 0; pointer-events: none; z-index: 100;}
+        .animate-combo { animation: popCombo 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popCombo { 0% { opacity: 0; transform: translate(-50%, -30%) scale(0.5); } 20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -60%) scale(0.8); } }
     </style>
 </head>
 <body>
 
 <div id="app-container">
+    <div id="combo-display"></div> 
     <div class="app-header">
         <div class="logo-icon">🌳</div>
         <h1>수리나무학원</h1>
@@ -140,14 +128,15 @@
         <button id="nav-dictation" class="menu-btn" onclick="showSection('dictation-section', this)">2. 영작</button>
         <button id="nav-grammar" class="menu-btn" onclick="showSection('grammar-section', this)">3. 분석</button>
         <button id="nav-history" class="menu-btn" onclick="showSection('history-section', this); renderHistory();">4. 기록</button>
+        <button id="nav-review" class="menu-btn" onclick="showSection('review-section', this); renderReview();" style="background:#FED7D7; color:#C53030;">5. 오답</button>
     </div>
 
     <div id="word-section" class="section active">
         <div id="intro-screen-word">
             <div style="font-size: 4rem; margin-bottom: 10px;">🥚</div>
             <h2 style="color: var(--main-green);">전설의 용 키우기!</h2>
-            <p style="font-weight: bold; color: #4A5568;">단어 30문항을 맞춰가며<br>알을 멋진 용으로 진화시켜 보세요.</p>
-            <button class="start-btn" onclick="startWordTest()">테스트 시작하기 🚀</button>
+            <p style="font-weight: bold; color: #4A5568;">단어를 맞춰가며 알을 멋진 용으로 진화시켜 보세요.</p>
+            <button class="start-btn" onclick="initAudioContext(); startWordTest();">테스트 시작하기 🚀</button>
         </div>
 
         <div id="quiz-screen-word" style="display: none;">
@@ -192,20 +181,22 @@
         <div class="status-text" id="sentence-status">문제 1 / 17</div>
         <div id="sentence-ko-text" class="korean-meaning">한글 뜻 로딩중...</div>
         
-        <div class="drag-tip">💡 꿀팁: 단어를 잘못 넣었을 땐 가볍게 터치해서 빼거나, <b>꾹 눌러서 스르륵 끌어다 놓기(드래그)</b>로 순서를 바꿀 수 있어요!</div>
+        <div class="drag-tip">💡 꿀팁: 단어를 잘못 넣었을 땐 <b>꾹 눌러서 스르륵 끌어다 놓기(드래그)</b>로 순서를 바꿀 수 있어요!</div>
         
         <div id="answer-area"></div>
         <div id="scrambled-words"></div>
         
-        <button id="audio-toggle-btn" class="audio-ctrl-btn" onclick="toggleAudio()">▶️ 원어민 음성 재생</button>
+        <div style="display: flex; gap: 8px; margin-top: 15px;">
+            <button id="speed-btn" class="audio-ctrl-btn" style="background: #718096; flex: 1; margin-top: 0; padding: 10px 5px;" onclick="toggleSpeechRate()">🐇 원래 속도</button>
+            <button id="audio-toggle-btn" class="audio-ctrl-btn" style="flex: 2; margin-top: 0;" onclick="toggleAudio()">▶️ 원어민 음성 재생</button>
+        </div>
     </div>
 
     <div id="grammar-section" class="section">
         <div id="intro-screen-gram">
             <div style="font-size: 4rem; margin-bottom: 10px;">🥚</div>
             <h2 style="color: var(--main-green);">문장 마스터 용 키우기!</h2>
-            <p style="font-weight: bold; color: #4A5568;">본문 핵심 17문장을 완벽히 분석해서<br>전설의 용으로 진화시켜 보세요.</p>
-            <button class="start-btn" onclick="startGrammarTest()">분석 훈련 시작하기 🚀</button>
+            <button class="start-btn" onclick="initAudioContext(); startGrammarTest();">분석 훈련 시작하기 🚀</button>
         </div>
 
         <div id="quiz-screen-gram" style="display: none;">
@@ -228,9 +219,8 @@
             <div class="choice-grid" id="gram-choices"></div>
             
             <div id="gram-step1-exp" class="info-box" style="border-color:#3182CE;">
-                <div class="info-title" style="color:#3182CE;">💡 1단계 완료! 문장 속 진짜 모습은?</div>
+                <div class="info-title" style="color:#3182CE;">💡 1단계 완료!</div>
                 <div class="info-desc" id="gram-step1-desc"></div>
-                <div style="margin-top:15px; font-weight:800; color:#E53E3E; text-align:center;">이제 이 덩어리들이 어떤 역할(성분)을 하는지 찾아볼까요?</div>
                 <button class="step-btn blue" onclick="startGrammarStep2()">2단계: 문장 성분 맞히기 ➔</button>
             </div>
 
@@ -249,11 +239,78 @@
         <h3 style="color: var(--main-green); margin-top:0;">🏆 수리나무 명예의 전당</h3>
         <div id="history-list"></div>
     </div>
+
+    <div id="review-section" class="section">
+        <h3 style="color: #C53030; margin-top:0;">🚨 나의 약점 몬스터 도감</h3>
+        <p style="font-size:14px; color:#718096; font-weight:bold;">틀렸던 단어들을 모아뒀어요. 복습해서 내 것으로 만드세요!</p>
+        <div id="wrong-word-list" style="text-align:left; margin-bottom:20px;"></div>
+        <button class="start-btn" style="background:#E53E3E;" onclick="clearWrongWords()">도감 전체 비우기 🗑️</button>
+    </div>
 </div>
 
 <script>
     // ==========================================
-    // 1. Data Definitions (Basic Grammar - be동사)
+    // 0. Audio & Game Effects (SFX / Combo)
+    // ==========================================
+    let audioCtx = null;
+    let comboCount = 0;
+
+    function initAudioContext() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playTone(freq, type, duration, vol=0.1) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playCorrectSFX() {
+        playTone(600, 'sine', 0.1);
+        setTimeout(() => playTone(800, 'sine', 0.15), 100);
+    }
+
+    function playWrongSFX() {
+        playTone(300, 'sawtooth', 0.2, 0.15);
+    }
+
+    function playEvolutionSFX() {
+        playTone(400, 'square', 0.1, 0.05);
+        setTimeout(() => playTone(500, 'square', 0.1, 0.05), 150);
+        setTimeout(() => playTone(600, 'square', 0.3, 0.05), 300);
+    }
+
+    function triggerConfetti() {
+        playEvolutionSFX();
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#48BB78', '#3182CE', '#D69E2E', '#E53E3E'] });
+    }
+
+    function handleCombo(isCorrect) {
+        if (isCorrect) {
+            comboCount++;
+            if (comboCount >= 2) {
+                const comboEl = document.getElementById('combo-display');
+                comboEl.innerText = `${comboCount} COMBO! 🔥`;
+                comboEl.classList.remove('animate-combo');
+                void comboEl.offsetWidth; // 리플로우 강제 트리거
+                comboEl.classList.add('animate-combo');
+            }
+        } else {
+            comboCount = 0;
+        }
+    }
+
+    // ==========================================
+    // Data Definitions (Basic Grammar - be동사)
     // ==========================================
     const wordList = [
         { en: "pencil", ko: "연필" },
@@ -331,9 +388,6 @@
     const chunkPosList = ["명사(구/절)", "대명사", "동사", "형용사(구/절)", "부사(구/절)", "접속사(절)"];
     const roleList = ["주어", "서술어", "목적어", "보어", "수식어"];
 
-    // ==========================================
-    // 공통 로직 및 진화 UI
-    // ==========================================
     function shuffleArray(array) {
         let newArr = [...array];
         for (let i = newArr.length - 1; i > 0; i--) {
@@ -342,44 +396,36 @@
         }
         return newArr;
     }
-
-    function formatDate(dateObj) {
-        return `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')} ${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
-    }
-
-    function getTodayKey() {
-        const today = new Date();
-        return `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-    }
+    function formatDate(dateObj) { return `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`; }
+    function getTodayKey() { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`; }
 
     let isDictationLoaded = false; 
 
     function showSection(sectionId, btnElement) {
         stopLooping(); 
+        comboCount = 0; // 탭 이동시 콤보 리셋
         document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.menu-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(sectionId).classList.add('active');
         if(btnElement) btnElement.classList.add('active');
         
         if(sectionId === 'dictation-section') { 
+            initAudioContext();
             if (!isDictationLoaded) { loadDictationSentence(); isDictationLoaded = true; } 
             else { isLooping = true; playAndLoop(); }
             updateAudioBtnText();
-            updateEvolutionUI('dict-evo', currentSentenceIdx, sentenceList.length);
         }
     }
 
     function updateEvolutionUI(prefix, current, total) {
         const ratio = total === 0 ? 0 : current / total;
-        let emoji = '🥚';
-        let stageName = '신비한 수리나무 알';
-
+        let emoji = '🥚'; let stageName = '신비한 수리나무 알';
         if (ratio === 0) { emoji = '🥚'; stageName = '신비한 수리나무 알'; }
         else if (ratio < 0.25) { emoji = '🐣'; stageName = '부화하는 아기 용'; }
         else if (ratio < 0.5) { emoji = '🦎'; stageName = '꼬마 드래곤'; }
         else if (ratio < 0.75) { emoji = '🦖'; stageName = '성장하는 파워 용'; }
         else if (ratio < 1.0) { emoji = '🐲'; stageName = '비상하는 매직 용'; }
-        else { emoji = '🐉✨'; stageName = '수리나무 마스터 용!!'; }
+        else { emoji = '🐉✨'; stageName = '수리나무 마스터 용!!'; playEvolutionSFX(); } // 진화 사운드
 
         const percent = Math.floor(ratio * 100);
         const emojiEl = document.getElementById(prefix + '-emoji');
@@ -392,330 +438,233 @@
     }
 
     // ==========================================
-    // 1. 단어 테스트 로직
+    // 1. 단어 테스트
     // ==========================================
-    let currentWordTestList = [];
-    let currentWordIdx = 0;
-    let wordCorrectCount = 0;
-    let isWordAnswering = false;
+    let currentWordTestList = []; let currentWordIdx = 0; let wordCorrectCount = 0; let isWordAnswering = false;
 
     function startWordTest() {
-        currentWordTestList = shuffleArray(wordList);
-        currentWordIdx = 0;
-        wordCorrectCount = 0;
-        
-        document.getElementById('intro-screen-word').style.display = 'none';
-        document.getElementById('result-screen-word').style.display = 'none';
+        currentWordTestList = shuffleArray(wordList); currentWordIdx = 0; wordCorrectCount = 0; comboCount = 0;
+        document.getElementById('intro-screen-word').style.display = 'none'; document.getElementById('result-screen-word').style.display = 'none';
         document.getElementById('quiz-screen-word').style.display = 'block';
-        
         loadWordQuestion();
     }
 
     function loadWordQuestion() {
-        isWordAnswering = false;
-        updateEvolutionUI('word-evo', currentWordIdx, currentWordTestList.length);
-
+        isWordAnswering = false; updateEvolutionUI('word-evo', currentWordIdx, currentWordTestList.length);
         const currentQ = currentWordTestList[currentWordIdx];
         document.getElementById('word-status').innerText = `문제 ${currentWordIdx + 1} / ${currentWordTestList.length}`;
         document.getElementById('word-display').innerText = currentQ.en;
         
-        const optionsDiv = document.getElementById('word-options');
-        optionsDiv.innerHTML = '';
+        window.speechSynthesis.cancel(); 
+        const wordAudio = new SpeechSynthesisUtterance(currentQ.en); wordAudio.lang = 'en-US'; wordAudio.rate = 1.0;
+        window.speechSynthesis.speak(wordAudio);
 
+        const optionsDiv = document.getElementById('word-options'); optionsDiv.innerHTML = '';
         let options = [{ text: currentQ.ko, isCorrect: true }];
         let distractors = shuffleArray(wordList.filter(w => w.ko !== currentQ.ko));
-        
-        for(let i=0; i<3; i++) {
-            if(distractors[i]) options.push({ text: distractors[i].ko, isCorrect: false });
-        }
+        for(let i=0; i<3; i++) { if(distractors[i]) options.push({ text: distractors[i].ko, isCorrect: false }); }
         options = shuffleArray(options);
 
         options.forEach((opt, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
+            const btn = document.createElement('button'); btn.className = 'option-btn';
             btn.innerText = `${index + 1}. ${opt.text}`;
-            btn.onclick = () => handleWordAnswer(btn, opt.isCorrect, optionsDiv);
+            btn.onclick = () => handleWordAnswer(btn, opt.isCorrect, optionsDiv, currentQ);
             optionsDiv.appendChild(btn);
         });
     }
 
-    function handleWordAnswer(clickedBtn, isCorrect, optionsContainer) {
+    function handleWordAnswer(clickedBtn, isCorrect, optionsContainer, currentQ) {
         if (isWordAnswering) return;
         isWordAnswering = true;
+        handleCombo(isCorrect); // 콤보 처리
 
         if (isCorrect) {
-            clickedBtn.classList.add('correct');
-            wordCorrectCount++;
+            playCorrectSFX();
+            clickedBtn.classList.add('correct'); wordCorrectCount++;
         } else {
+            playWrongSFX();
             clickedBtn.classList.add('wrong');
+            saveWrongWord(currentQ); // 오답 노트 저장
             const buttons = optionsContainer.getElementsByClassName('option-btn');
-            for(let btn of buttons) {
-                if(btn.innerText.includes(currentWordTestList[currentWordIdx].ko)) {
-                    btn.classList.add('correct');
-                    break;
-                }
-            }
+            for(let btn of buttons) { if(btn.innerText.includes(currentQ.ko)) { btn.classList.add('correct'); break; } }
         }
 
         setTimeout(() => {
             currentWordIdx++;
-            if (currentWordIdx < currentWordTestList.length) {
-                loadWordQuestion();
-            } else {
-                finishWordTest();
-            }
+            if (currentWordIdx < currentWordTestList.length) loadWordQuestion(); else finishWordTest();
         }, 800);
     }
 
     function finishWordTest() {
         updateEvolutionUI('word-evo', currentWordTestList.length, currentWordTestList.length);
         setTimeout(() => {
-            document.getElementById('quiz-screen-word').style.display = 'none';
-            document.getElementById('result-screen-word').style.display = 'block';
-            
-            const total = currentWordTestList.length;
-            const calculatedScore = Math.round((wordCorrectCount / total) * 100);
-            
+            document.getElementById('quiz-screen-word').style.display = 'none'; document.getElementById('result-screen-word').style.display = 'block';
+            const total = currentWordTestList.length; const calculatedScore = Math.round((wordCorrectCount / total) * 100);
             const resultDragon = document.getElementById('result-dragon-word');
-            if (calculatedScore >= 90) resultDragon.innerText = '🐉✨';
+            
+            if (calculatedScore >= 90) { resultDragon.innerText = '🐉✨'; triggerConfetti(); }
             else if (calculatedScore >= 70) resultDragon.innerText = '🐲';
             else resultDragon.innerText = '🦖💦';
 
             document.getElementById('final-score-word').innerText = `${calculatedScore}점`;
             document.getElementById('final-score-word').style.color = calculatedScore >= 90 ? '#3182CE' : (calculatedScore >= 70 ? '#D69E2E' : '#E53E3E');
             document.getElementById('final-detail-word').innerText = `정답: ${wordCorrectCount}개 / ${total}문항`;
-            
             saveHistory('word', { score: calculatedScore, correct: wordCorrectCount, total: total });
         }, 500); 
     }
 
-    function resetWordTest() {
-        document.getElementById('result-screen-word').style.display = 'none';
-        document.getElementById('intro-screen-word').style.display = 'block';
-    }
+    function resetWordTest() { document.getElementById('result-screen-word').style.display = 'none'; document.getElementById('intro-screen-word').style.display = 'block'; }
 
     // ==========================================
-    // 2. 영작(딕테이션) 로직 (⭐SortableJS 드래그 앤 드롭 추가⭐)
+    // 2. 영작(딕테이션)
     // ==========================================
-    let currentSentenceIdx = 0;
-    let isLooping = false;
-    let loopTimeout;
+    let currentSentenceIdx = 0; let isLooping = false; let loopTimeout; let currentSpeechRate = 1.0; 
+
+    function toggleSpeechRate() {
+        currentSpeechRate = currentSpeechRate === 1.0 ? 0.7 : 1.0;
+        document.getElementById('speed-btn').innerHTML = currentSpeechRate === 1.0 ? '🐇 원래 속도' : '🐢 느린 속도';
+        if (isLooping) playAndLoop();
+    }
 
     function playAndLoop() {
         if(!isLooping || sentenceList.length === 0) return;
         window.speechSynthesis.cancel(); 
-        const text = sentenceList[currentSentenceIdx].en;
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.8;
+        const utterance = new SpeechSynthesisUtterance(sentenceList[currentSentenceIdx].en);
+        utterance.lang = 'en-US'; utterance.rate = currentSpeechRate; 
         utterance.onend = function() { if(isLooping) loopTimeout = setTimeout(playAndLoop, 1000); };
         window.speechSynthesis.speak(utterance);
     }
 
-    function stopLooping() {
-        isLooping = false;
-        window.speechSynthesis.cancel();
-        clearTimeout(loopTimeout);
-    }
-
-    function toggleAudio() {
-        if (isLooping) stopLooping();
-        else { isLooping = true; playAndLoop(); }
-        updateAudioBtnText();
-    }
-
+    function stopLooping() { isLooping = false; window.speechSynthesis.cancel(); clearTimeout(loopTimeout); }
+    function toggleAudio() { if (isLooping) stopLooping(); else { isLooping = true; playAndLoop(); } updateAudioBtnText(); }
     function updateAudioBtnText() {
         const btn = document.getElementById('audio-toggle-btn');
-        if(btn) {
-            btn.innerHTML = isLooping ? '⏸️ 음성 반복 멈춤' : '▶️ 음성 반복 재생';
-            btn.style.background = isLooping ? '#E53E3E' : '#3182CE';
-        }
+        if(btn) { btn.innerHTML = isLooping ? '⏸️ 음성 반복 멈춤' : '▶️ 원어민 음성 재생'; btn.style.background = isLooping ? '#E53E3E' : '#3182CE'; }
     }
 
     function loadDictationSentence() {
         if(sentenceList.length === 0) return;
-        stopLooping(); 
-        
-        updateEvolutionUI('dict-evo', currentSentenceIdx, sentenceList.length);
-
+        stopLooping(); updateEvolutionUI('dict-evo', currentSentenceIdx, sentenceList.length);
         const currentSenObj = sentenceList[currentSentenceIdx];
         document.getElementById('sentence-status').innerText = `영작 문제 ${currentSentenceIdx + 1} / ${sentenceList.length}`;
         document.getElementById('sentence-ko-text').innerText = currentSenObj.ko;
         
-        const answerArea = document.getElementById('answer-area');
-        answerArea.innerHTML = '';
-        answerArea.style.backgroundColor = 'var(--bg-color)';
-        answerArea.style.borderColor = 'var(--main-green)';
+        const answerArea = document.getElementById('answer-area'); answerArea.innerHTML = '';
+        answerArea.style.backgroundColor = 'var(--bg-color)'; answerArea.style.borderColor = 'var(--main-green)';
         
-        const scrambledDiv = document.getElementById('scrambled-words');
-        scrambledDiv.innerHTML = '';
-        
+        const scrambledDiv = document.getElementById('scrambled-words'); scrambledDiv.innerHTML = '';
         let words = currentSenObj.en.split(' ').filter(w => w.trim() !== '');
         let scrambled = shuffleArray([...words]);
         
         scrambled.forEach(word => {
-            const btn = document.createElement('button');
-            btn.className = 'word-block';
-            btn.innerText = word;
+            const btn = document.createElement('button'); btn.className = 'word-block'; btn.innerText = word;
             btn.onclick = function() {
-                if (this.parentElement.id === 'scrambled-words') { 
-                    answerArea.appendChild(this); 
-                } else { 
-                    scrambledDiv.appendChild(this); 
-                }
+                if (this.parentElement.id === 'scrambled-words') answerArea.appendChild(this); 
+                else scrambledDiv.appendChild(this); 
                 if (scrambledDiv.children.length === 0) checkDictationSentence();
             };
             scrambledDiv.appendChild(btn);
         });
 
-        // ⭐ 드래그 애니메이션 대폭 개선 ⭐
         if (!window.dictSortable) {
             window.dictSortable = new Sortable(answerArea, {
-                animation: 300, 
-                easing: "cubic-bezier(0.25, 1, 0.5, 1)", 
-                ghostClass: 'sortable-ghost',
-                dragClass: 'sortable-drag',
-                swapThreshold: 0.65, 
-                onEnd: function () {
-                    // 순서를 바꾼 뒤 모든 단어가 올라와 있다면 정답 체크
-                    if (document.getElementById('scrambled-words').children.length === 0) {
-                        checkDictationSentence();
-                    }
-                }
+                animation: 300, easing: "cubic-bezier(0.25, 1, 0.5, 1)", ghostClass: 'sortable-ghost', dragClass: 'sortable-drag', swapThreshold: 0.65, 
+                onEnd: function () { if (document.getElementById('scrambled-words').children.length === 0) checkDictationSentence(); }
             });
         }
-        
-        isLooping = true;
-        playAndLoop();
-        updateAudioBtnText();
+        isLooping = true; playAndLoop(); updateAudioBtnText();
     }
     
     function checkDictationSentence() {
         const answerArea = document.getElementById('answer-area');
-        
-        // 학생 문장과 원본 문장 비교 시 대소문자 & 띄어쓰기 완전 무시
         const studentSentence = Array.from(answerArea.children).map(btn => btn.innerText.trim()).join(' ');
         const targetSentence = sentenceList[currentSentenceIdx].en;
         const normalize = (str) => str.toLowerCase().replace(/\s+/g, ' ').trim();
 
         if (normalize(studentSentence) === normalize(targetSentence)) {
-            answerArea.style.backgroundColor = '#C6F6D5';
-            answerArea.style.borderColor = '#48BB78';
-            recordDictationProgress(); 
-            stopLooping(); 
-            updateAudioBtnText();
+            playCorrectSFX(); handleCombo(true);
+            answerArea.style.backgroundColor = '#C6F6D5'; answerArea.style.borderColor = '#48BB78';
+            recordDictationProgress(); stopLooping(); updateAudioBtnText();
             setTimeout(() => { nextDictationSentence(); }, 800); 
         } else {
+            playWrongSFX(); handleCombo(false);
             answerArea.style.backgroundColor = '#FED7D7';
             setTimeout(() => { answerArea.style.backgroundColor = 'var(--bg-color)'; }, 400);
         }
     }
     
     function nextDictationSentence() {
-        if (currentSentenceIdx + 1 < sentenceList.length) { 
-            currentSentenceIdx++; 
-            loadDictationSentence(); 
-        } else { 
-            stopLooping(); 
-            updateAudioBtnText();
-            updateEvolutionUI('dict-evo', sentenceList.length, sentenceList.length);
+        if (currentSentenceIdx + 1 < sentenceList.length) { currentSentenceIdx++; loadDictationSentence(); } 
+        else { 
+            stopLooping(); updateAudioBtnText(); updateEvolutionUI('dict-evo', sentenceList.length, sentenceList.length); triggerConfetti();
             setTimeout(() => { alert('수리나무 마스터 달성! 영작 훈련을 모두 완료했습니다! 🐉🎉'); }, 300);
         }
     }
-
     function jumpToSentence() {
         const num = parseInt(document.getElementById('startSenNum').value);
-        if (num >= 1 && num <= sentenceList.length) { 
-            currentSentenceIdx = num - 1; 
-            loadDictationSentence(); 
-        } else { alert(`1에서 ${sentenceList.length} 사이의 번호를 입력하세요.`); }
+        if (num >= 1 && num <= sentenceList.length) { currentSentenceIdx = num - 1; comboCount = 0; loadDictationSentence(); } 
+        else alert(`1에서 ${sentenceList.length} 사이의 번호를 입력하세요.`);
     }
 
     function recordDictationProgress() {
-        const dateKey = getTodayKey();
-        let history = JSON.parse(localStorage.getItem('surinamu_dictation_history')) || {};
-        if (!history[dateKey]) { history[dateKey] = { dictation: 0 }; }
-        history[dateKey].dictation++;
+        const dateKey = getTodayKey(); let history = JSON.parse(localStorage.getItem('surinamu_dictation_history')) || {};
+        if (!history[dateKey]) history[dateKey] = { dictation: 0 }; history[dateKey].dictation++;
         localStorage.setItem('surinamu_dictation_history', JSON.stringify(history));
     }
 
     // ==========================================
-    // 3. 문장 분석(문법) 로직
+    // 3. 문법(문장 분석) - 컬러 코드 적용
     // ==========================================
-    let curGramIdx = 0;
-    let gramStage = 1; 
-    let activeChunk = 0;
-    let gramAnswers = [];
+    let curGramIdx = 0; let gramStage = 1; let activeChunk = 0; let gramAnswers = [];
+
+    function getColorForPos(pos) {
+        if(pos.includes('명사')) return { bg: '#EBF8FF', text: '#3182CE', border: '#90CDF4' }; 
+        if(pos.includes('동사')) return { bg: '#FFF5F5', text: '#E53E3E', border: '#FEB2B2' }; 
+        if(pos.includes('형용사')) return { bg: '#F0FFF4', text: '#38A169', border: '#9AE6B4' }; 
+        if(pos.includes('부사')) return { bg: '#FAF5FF', text: '#805AD5', border: '#D6BCFA' }; 
+        if(pos.includes('접속사')) return { bg: '#FFFAF0', text: '#DD6B20', border: '#FBD38D' }; 
+        return { bg: '#F0FDF4', text: '#2F855A', border: '#48BB78' }; 
+    }
 
     function startGrammarTest() {
-        curGramIdx = 0;
-        gramStage = 1;
-        document.getElementById('intro-screen-gram').style.display = 'none';
-        document.getElementById('result-screen-gram').style.display = 'none';
-        document.getElementById('quiz-screen-gram').style.display = 'block';
-        loadGrammar();
+        curGramIdx = 0; gramStage = 1;
+        document.getElementById('intro-screen-gram').style.display = 'none'; document.getElementById('result-screen-gram').style.display = 'none';
+        document.getElementById('quiz-screen-gram').style.display = 'block'; loadGrammar();
     }
 
     function loadGrammar() {
         updateEvolutionUI('gram-evo', curGramIdx, grammarList.length);
-
         const d = grammarList[curGramIdx];
         let badge = document.getElementById('gram-level-badge');
-        badge.innerText = "1단계: 품사(구/절) 찾기";
-        badge.style.color = "var(--main-green)";
-        badge.style.background = "#C6F6D5";
-
+        badge.innerText = "1단계: 품사(구/절) 찾기"; badge.style.color = "var(--main-green)"; badge.style.background = "#C6F6D5";
         document.getElementById('gram-count').innerText = `${curGramIdx + 1} / ${grammarList.length}`;
         document.getElementById('gram-ko').innerText = d[0];
-        document.getElementById('gram-result-container').innerHTML = '';
-        document.getElementById('gram-step1-exp').classList.remove('show');
+        document.getElementById('gram-result-container').innerHTML = ''; document.getElementById('gram-step1-exp').classList.remove('show');
         document.getElementById('gram-choices').style.display = 'flex';
         
-        const container = document.getElementById('gram-chunks');
-        container.innerHTML = '';
-        gramAnswers = new Array(d[1].length).fill(null);
-        activeChunk = 0;
+        const container = document.getElementById('gram-chunks'); container.innerHTML = '';
+        gramAnswers = new Array(d[1].length).fill(null); activeChunk = 0;
 
         d[1].forEach((c, i) => {
-            container.innerHTML += `
-                <div class="chunk-card ${i===0?'active':''}" onclick="activeChunk=${i}; renderChunks();">
-                    <div class="chunk-txt">${c[0]}</div>
-                    <div class="chunk-ans" id="ans-${i}">?</div>
-                </div>
-            `;
+            container.innerHTML += `<div class="chunk-card ${i===0?'active':''}" onclick="activeChunk=${i}; renderChunks();"><div class="chunk-txt">${c[0]}</div><div class="chunk-ans" id="ans-${i}">?</div></div>`;
         });
         renderChoices();
     }
 
-    function renderChunks() {
-        document.querySelectorAll('.chunk-card').forEach((c, i) => {
-            c.classList.toggle('active', i === activeChunk);
-        });
-    }
-
+    function renderChunks() { document.querySelectorAll('.chunk-card').forEach((c, i) => { c.classList.toggle('active', i === activeChunk); }); }
     function renderChoices() {
-        const grid = document.getElementById('gram-choices');
-        grid.innerHTML = '';
+        const grid = document.getElementById('gram-choices'); grid.innerHTML = '';
         const list = (gramStage === 1) ? chunkPosList : roleList;
-        list.forEach(item => {
-            grid.innerHTML += `<button class="choice-btn" onclick="pickGram('${item}')">${item}</button>`;
-        });
+        list.forEach(item => { grid.innerHTML += `<button class="choice-btn" onclick="pickGram('${item}')">${item}</button>`; });
     }
 
     function getSimplePos(detail, role) {
         if (detail.includes("대명사")) return "대명사";
         if (detail.includes("동사") && !detail.includes("동명사") && !detail.includes("부정사") && !detail.includes("분사")) return "동사";
         if (detail.includes("접속사")) return "접속사(절)";
-        
-        // 데이터에 '명사'라는 키워드가 포함되어 있으면 무조건 명사로 리턴
         if (detail.includes("명사") || detail.includes("동명사")) return "명사(구/절)";
-        
-        // 보어 자리에 왔지만 형용사 역할을 하는 분사, 형용사 등
         if (role === "보어" && (detail.includes("부정사") || detail.includes("분사") || detail.includes("형용사"))) return "형용사(구/절)";
-        
-        // 주어나 목적어 자리에 온 부정사는 기본적으로 명사 처리
         if ((role === "주어" || role === "목적어") && detail.includes("부정사")) return "명사(구/절)";
-        
         if (detail.includes("형용사") || detail.includes("분사")) return "형용사(구/절)";
         if (detail.includes("부사") || detail.includes("전치사")) return "부사(구/절)";
         return "명사(구/절)";
@@ -731,36 +680,37 @@
 
     function pickGram(val) {
         const d = grammarList[curGramIdx];
-        const detailedPos = d[1][activeChunk][1];
-        const correctStep2 = d[1][activeChunk][2]; 
-        const correctStep1 = getSimplePos(detailedPos, correctStep2); 
-        
+        const detailedPos = d[1][activeChunk][1]; const correctStep2 = d[1][activeChunk][2]; const correctStep1 = getSimplePos(detailedPos, correctStep2); 
         const correct = (gramStage === 1) ? correctStep1 : correctStep2;
         const card = document.querySelectorAll('.chunk-card')[activeChunk];
         
         if(val === correct) {
+            playCorrectSFX();
             gramAnswers[activeChunk] = val;
+            
+            // 시각적 컬러 입히기
+            const colors = getColorForPos(correct);
+            card.style.backgroundColor = colors.bg; card.style.borderColor = colors.border;
             document.getElementById(`ans-${activeChunk}`).innerText = val;
-            document.getElementById(`ans-${activeChunk}`).style.color = (gramStage===1)?'#2F855A':'#3182CE';
+            document.getElementById(`ans-${activeChunk}`).style.color = colors.text;
             card.classList.add('correct');
             
             let next = gramAnswers.indexOf(null);
-            if(next !== -1) {
-                activeChunk = next;
-                renderChunks();
-            } else {
+            if(next !== -1) { activeChunk = next; renderChunks(); } 
+            else {
                 if(gramStage === 1) {
+                    playEvolutionSFX();
                     let descHtml = d[1].map(c => {
                         let word = c[0]; let detail = c[1]; let simple = getSimplePos(detail, c[2]);
                         if (detail === simple || detail === "대명사" || detail === "동사") return ""; 
                         return `<div class="detail-row"><b>${word}</b>는 <b>[${detail}]</b> 형태로서 이 안에서 <b>${simple}</b> 역할을 했어요.</div>`;
                     }).join('');
                     if(descHtml === "") descHtml = "<div class='detail-row'>이 문장은 복잡한 구나 절 없이 기본 단어들로 깔끔하게 이루어져 있어요!</div>";
-
                     document.getElementById('gram-choices').style.display = 'none';
                     document.getElementById('gram-step1-desc').innerHTML = descHtml;
                     document.getElementById('gram-step1-exp').classList.add('show');
                 } else {
+                    playEvolutionSFX();
                     let patternStr = getPattern(d[1].map(c => c[2]));
                     document.getElementById('gram-choices').style.display = 'none';
                     document.getElementById('gram-result-container').innerHTML = `
@@ -768,65 +718,41 @@
                             <div class="pattern-title">🎉 완벽하게 분석했습니다!</div>
                             <div class="pattern-desc">${patternStr}</div>
                             <button class="step-btn blue" style="margin-top:20px;" onclick="nextGrammar()">다음 문장 분석하기 ➔</button>
-                        </div>
-                    `;
+                        </div>`;
                     recordGrammarProgress();
                 }
             }
         } else {
+            playWrongSFX();
             card.style.borderColor = '#E53E3E';
-            setTimeout(()=> {
-                if(card.classList.contains('active')) card.style.borderColor = '#3182CE';
-                else card.style.borderColor = '#CBD5E0';
-            }, 600);
+            setTimeout(()=> { if(card.classList.contains('active')) card.style.borderColor = '#3182CE'; else card.style.borderColor = '#CBD5E0'; }, 600);
         }
     }
     
     function startGrammarStep2() {
-        document.getElementById('gram-step1-exp').classList.remove('show');
-        gramStage = 2;
-        let badge = document.getElementById('gram-level-badge');
-        badge.innerText = "2단계: 문장 성분 맞히기";
-        badge.style.color = "#3182CE";
-        badge.style.background = "#EBF8FF";
-        
-        document.querySelectorAll('.chunk-card').forEach(c => c.classList.remove('correct'));
+        document.getElementById('gram-step1-exp').classList.remove('show'); gramStage = 2;
+        let badge = document.getElementById('gram-level-badge'); badge.innerText = "2단계: 문장 성분 맞히기"; badge.style.color = "#3182CE"; badge.style.background = "#EBF8FF";
+        document.querySelectorAll('.chunk-card').forEach(c => { c.classList.remove('correct'); c.style.backgroundColor='white'; });
         document.querySelectorAll('.chunk-ans').forEach(a => { a.innerText = "?"; a.style.color = "#A0AEC0"; });
         document.getElementById('gram-choices').style.display = 'flex';
-        
-        gramAnswers.fill(null);
-        activeChunk = 0;
-        renderChunks();
-        renderChoices();
+        gramAnswers.fill(null); activeChunk = 0; renderChunks(); renderChoices();
     }
 
     function nextGrammar() {
         curGramIdx++;
-        if(curGramIdx < grammarList.length) {
-            gramStage = 1;
-            loadGrammar();
-        } else {
-            updateEvolutionUI('gram-evo', grammarList.length, grammarList.length);
-            setTimeout(() => {
-                document.getElementById('quiz-screen-gram').style.display = 'none';
-                document.getElementById('result-screen-gram').style.display = 'block';
-            }, 500);
+        if(curGramIdx < grammarList.length) { gramStage = 1; loadGrammar(); } 
+        else {
+            updateEvolutionUI('gram-evo', grammarList.length, grammarList.length); triggerConfetti();
+            setTimeout(() => { document.getElementById('quiz-screen-gram').style.display = 'none'; document.getElementById('result-screen-gram').style.display = 'block'; }, 500);
         }
     }
 
-    function resetGrammarTest() {
-        document.getElementById('result-screen-gram').style.display = 'none';
-        document.getElementById('intro-screen-gram').style.display = 'block';
-    }
-
+    function resetGrammarTest() { document.getElementById('result-screen-gram').style.display = 'none'; document.getElementById('intro-screen-gram').style.display = 'block'; }
     function recordGrammarProgress() {
-        const dateKey = getTodayKey();
-        let history = JSON.parse(localStorage.getItem('surinamu_grammar_history')) || {};
-        if (!history[dateKey]) { history[dateKey] = { count: 0 }; }
-        history[dateKey].count++;
+        const dateKey = getTodayKey(); let history = JSON.parse(localStorage.getItem('surinamu_grammar_history')) || {};
+        if (!history[dateKey]) history[dateKey] = { count: 0 }; history[dateKey].count++;
         localStorage.setItem('surinamu_grammar_history', JSON.stringify(history));
     }
-
     function saveHistory(type, data) {
         let history = JSON.parse(localStorage.getItem(`surinamu_${type}_history`)) || [];
         history.unshift({ date: formatDate(new Date()), ...data });
@@ -834,78 +760,89 @@
     }
 
     // ==========================================
-    // 4. 기록(History) 렌더링 로직
+    // 4. 명예의 전당 (기록)
     // ==========================================
     function renderHistory() {
-        const historyList = document.getElementById('history-list');
-        historyList.innerHTML = '';
-        
+        const historyList = document.getElementById('history-list'); historyList.innerHTML = '';
         let wordHistory = JSON.parse(localStorage.getItem('surinamu_word_history')) || [];
         let dictHistory = JSON.parse(localStorage.getItem('surinamu_dictation_history')) || {};
         let gramHistory = JSON.parse(localStorage.getItem('surinamu_grammar_history')) || {};
 
-        // 1. 단어 테스트 기록
-        const wordTitle = document.createElement('div');
-        wordTitle.className = 'history-category';
-        wordTitle.innerHTML = '📝 단어 100점 테스트';
-        historyList.appendChild(wordTitle);
+        const wordTitle = document.createElement('div'); wordTitle.className = 'history-category'; wordTitle.innerHTML = '📝 단어 100점 테스트'; historyList.appendChild(wordTitle);
         if(wordHistory.length === 0) { historyList.innerHTML += '<p style="color:#A0AEC0; font-size:14px;">응시 기록이 없습니다.</p>'; } 
         else {
             wordHistory.slice(0, 3).forEach(item => {
                 let stamp = item.score >= 90 ? '<div class="stamp-excellent">마스터 용! 🐉</div>' : ''; 
-                historyList.innerHTML += `
-                    <div class="history-card">
-                        <div class="history-info">
-                            <span class="history-date">${item.date}</span>
-                            <span class="history-score">${item.score}점 <span style="font-size:14px; color:#A0AEC0;">(${item.correct}/${item.total})</span></span>
-                        </div>
-                        ${stamp}
-                    </div>`;
+                historyList.innerHTML += `<div class="history-card"><div class="history-info"><span class="history-date">${item.date}</span><span class="history-score">${item.score}점 <span style="font-size:14px; color:#A0AEC0;">(${item.correct}/${item.total})</span></span></div>${stamp}</div>`;
             });
         }
 
-        // 2. 딕테이션 기록
-        const dictTitle = document.createElement('div');
-        dictTitle.className = 'history-category';
-        dictTitle.innerHTML = '🎧 영작(딕테이션) 달성도';
-        historyList.appendChild(dictTitle);
+        const dictTitle = document.createElement('div'); dictTitle.className = 'history-category'; dictTitle.innerHTML = '🎧 영작(딕테이션) 달성도'; historyList.appendChild(dictTitle);
         const dictDates = Object.keys(dictHistory).sort((a, b) => new Date(b) - new Date(a));
         if(dictDates.length === 0) { historyList.innerHTML += '<p style="color:#A0AEC0; font-size:14px;">훈련 기록이 없습니다.</p>'; } 
         else {
             dictDates.slice(0, 3).forEach(date => {
-                const data = dictHistory[date];
-                let stamp = data.dictation >= 10 ? '<span class="stamp-excellent" style="font-size:14px;">멋진 진화! 🐉</span>' : ''; 
-                historyList.innerHTML += `
-                    <div class="history-card">
-                        <div class="history-info">
-                            <span class="history-date">${date.replace(/-/g, '. ')}</span>
-                            <span class="history-score">${data.dictation}문장 <span style="font-size:14px; color:#A0AEC0;">성공</span></span>
-                        </div>
-                        ${stamp}
-                    </div>`;
+                const data = dictHistory[date]; let stamp = data.dictation >= 10 ? '<span class="stamp-excellent" style="font-size:14px;">멋진 진화! 🐉</span>' : ''; 
+                historyList.innerHTML += `<div class="history-card"><div class="history-info"><span class="history-date">${date.replace(/-/g, '. ')}</span><span class="history-score">${data.dictation}문장 <span style="font-size:14px; color:#A0AEC0;">성공</span></span></div>${stamp}</div>`;
             });
         }
 
-        // 3. 문법 분석 기록
-        const gramTitle = document.createElement('div');
-        gramTitle.className = 'history-category';
-        gramTitle.innerHTML = '🧩 문장 분석 달성도';
-        historyList.appendChild(gramTitle);
+        const gramTitle = document.createElement('div'); gramTitle.className = 'history-category'; gramTitle.innerHTML = '🧩 문장 분석 달성도'; historyList.appendChild(gramTitle);
         const gramDates = Object.keys(gramHistory).sort((a, b) => new Date(b) - new Date(a));
         if(gramDates.length === 0) { historyList.innerHTML += '<p style="color:#A0AEC0; font-size:14px;">분석 기록이 없습니다.</p>'; } 
         else {
             gramDates.slice(0, 3).forEach(date => {
-                const data = gramHistory[date];
-                let stamp = data.count >= 10 ? '<span class="stamp-excellent" style="font-size:14px;">문법 마스터! 🐉</span>' : ''; 
-                historyList.innerHTML += `
-                    <div class="history-card">
-                        <div class="history-info">
-                            <span class="history-date">${date.replace(/-/g, '. ')}</span>
-                            <span class="history-score">${data.count}문장 <span style="font-size:14px; color:#A0AEC0;">분석완료</span></span>
-                        </div>
-                        ${stamp}
-                    </div>`;
+                const data = gramHistory[date]; let stamp = data.count >= 10 ? '<span class="stamp-excellent" style="font-size:14px;">문법 마스터! 🐉</span>' : ''; 
+                historyList.innerHTML += `<div class="history-card"><div class="history-info"><span class="history-date">${date.replace(/-/g, '. ')}</span><span class="history-score">${data.count}문장 <span style="font-size:14px; color:#A0AEC0;">분석완료</span></span></div>${stamp}</div>`;
             });
+        }
+    }
+
+    // ==========================================
+    // 5. 오답 복습 기능 (나만의 몬스터 도감)
+    // ==========================================
+    function saveWrongWord(wordObj) {
+        let list = JSON.parse(localStorage.getItem('surinamu_wrong_words') || '[]');
+        if (!list.find(w => w.en === wordObj.en)) {
+            list.push(wordObj);
+            localStorage.setItem('surinamu_wrong_words', JSON.stringify(list));
+        }
+    }
+
+    function renderReview() {
+        const listDiv = document.getElementById('wrong-word-list');
+        listDiv.innerHTML = '';
+        let list = JSON.parse(localStorage.getItem('surinamu_wrong_words') || '[]');
+        
+        if (list.length === 0) {
+            listDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #48BB78; font-weight: bold; background: #F0FDF4; border-radius: 10px;">🎉 현재 등록된 오답이 없습니다! 완벽해요!</div>';
+            return;
+        }
+
+        list.forEach((w, idx) => {
+            listDiv.innerHTML += `
+                <div class="wrong-word-item">
+                    <div>
+                        <div class="wrong-en">${w.en}</div>
+                        <div class="wrong-ko">${w.ko}</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteWrongWord(${idx})">외웠음 ✓</button>
+                </div>
+            `;
+        });
+    }
+
+    function deleteWrongWord(idx) {
+        let list = JSON.parse(localStorage.getItem('surinamu_wrong_words') || '[]');
+        list.splice(idx, 1);
+        localStorage.setItem('surinamu_wrong_words', JSON.stringify(list));
+        renderReview();
+    }
+
+    function clearWrongWords() {
+        if(confirm("오답 도감을 전부 비울까요?")) {
+            localStorage.removeItem('surinamu_wrong_words');
+            renderReview();
         }
     }
 </script>
