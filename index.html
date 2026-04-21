@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>수리나무학원 스마트 학습 - There is / There are 구문</title>
+    <title>수리나무학원 스마트 학습 - There is / are 구문 & be동사</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -18,16 +18,17 @@
 
         body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; text-align: center; background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--text-dark); }
         
-        #app-container { max-width: 480px; margin: 0 auto; background: white; border-radius: 24px; box-shadow: var(--box-shadow); overflow: hidden; padding-bottom: 30px; position: relative;}
+        #app-container { max-width: 500px; margin: 0 auto; background: white; border-radius: 24px; box-shadow: var(--box-shadow); overflow: hidden; padding-bottom: 30px; position: relative;}
         
         /* 헤더 스타일 */
-        .app-header { background: linear-gradient(135deg, var(--main-green), #276749); color: white; padding: 35px 20px 25px; text-align: center; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(47, 133, 90, 0.4);}
-        .app-header h1 { margin: 0; font-size: 32px; font-weight: 900; letter-spacing: -1.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .app-header { background: linear-gradient(135deg, var(--main-green), #276749); color: white; padding: 35px 20px 25px; text-align: center; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(47, 133, 90, 0.4);}
+        .app-header h1 { margin: 0; font-size: 30px; font-weight: 900; letter-spacing: -1.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
         .app-header p { margin: 10px 0 0 0; font-size: 15px; font-weight: bold; opacity: 0.9; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px;}
         .logo-icon { font-size: 45px; margin-bottom: 5px; text-shadow: 0 4px 10px rgba(0,0,0,0.2);}
 
+        /* 네비게이션 (6개 탭) */
         .nav-container { padding: 0 15px; display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-bottom: 25px; }
-        .menu-btn { flex: 1; min-width: 60px; padding: 12px 2px; cursor: pointer; border: none; border-radius: 12px; background-color: #EDF2F7; color: #4A5568; font-weight: bold; font-size: 13px; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
+        .menu-btn { flex: 1 1 calc(30% - 10px); min-width: 60px; padding: 12px 2px; cursor: pointer; border: none; border-radius: 12px; background-color: #EDF2F7; color: #4A5568; font-weight: bold; font-size: 13px; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
         .menu-btn:hover { background-color: #E2E8F0; transform: translateY(-2px); }
         .menu-btn.active { background-color: var(--main-green); color: white; box-shadow: 0 4px 10px rgba(47, 133, 90, 0.3); }
         
@@ -36,8 +37,6 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         .status-text { font-size: 15px; color: #718096; font-weight: 800; background: #EDF2F7; display: inline-block; padding: 5px 15px; border-radius: 20px;}
-        
-        /* 중도 포기 및 채점 버튼 */
         .stop-early-btn { background-color: #E2E8F0; color: #4A5568; border: none; padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; float: right; margin-top: -3px; }
         .stop-early-btn:hover { background-color: #CBD5E0; color: #2D3748; }
 
@@ -78,8 +77,9 @@
         .audio-ctrl-btn { width: 100%; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 16px; border: none; cursor: pointer; color: white; transition: 0.3s; margin-top: 10px;}
         .drag-tip { background: #FFFBEB; border: 1px solid #F6E05E; color: #B7791F; font-size: 13px; font-weight: bold; padding: 10px; border-radius: 8px; margin-bottom: 15px; line-height: 1.4;}
 
-        /* 문법 퀴즈(선택형) 스타일 */
-        .grammar-question-box { font-size: 22px; font-weight: 800; color: #2D3748; background: #EBF8FF; padding: 25px 15px; border-radius: 15px; margin-bottom: 20px; border: 2px solid #90CDF4; word-break: keep-all; line-height: 1.5; }
+        /* 문법 퀴즈(객관식) 스타일 */
+        .grammar-question-box { font-size: 20px; font-weight: 800; color: #2D3748; background: #EBF8FF; padding: 25px 15px; border-radius: 15px; margin-bottom: 20px; border: 2px solid #90CDF4; word-break: keep-all; line-height: 1.5; }
+        .grammar-question-box .dialogue { display: block; margin-bottom: 8px; text-align: left; padding-left: 10px;}
         .grammar-blank { display: inline-block; min-width: 60px; padding: 0 10px; border-bottom: 3px solid #3182CE; color: #3182CE; font-weight: 900; text-align: center; transition: 0.3s; }
         .grammar-blank.correct { color: #38A169; border-color: #38A169; }
         .grammar-blank.wrong { color: #E53E3E; border-color: #E53E3E; }
@@ -89,6 +89,27 @@
         .gram-btn:active { transform: scale(0.95); }
         .gram-btn.correct { background: var(--light-green); color: white; border-color: var(--light-green); }
         .gram-btn.wrong { background: #FC8181; color: white; border-color: #FC8181; animation: shake 0.4s; }
+
+        /* 문장 분석(기존) 스타일 */
+        .analysis-ko { font-size: 16px; font-weight: 800; background: #EBF8FF; padding: 15px; border-radius: 12px; border-left: 4px solid #3182CE; margin-bottom: 20px; word-break: keep-all; line-height: 1.4;}
+        .analysis-chunks { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
+        .chunk-card { border: 2px solid #CBD5E0; border-radius: 10px; min-width: 70px; background: white; cursor: pointer; overflow: hidden; transition: 0.2s;}
+        .chunk-card.active { border-color: #3182CE; box-shadow: 0 0 8px rgba(49,130,206,0.3); transform: translateY(-2px);}
+        .chunk-card.correct { border-color: var(--light-green); background: #F0FDF4; pointer-events: none;}
+        .chunk-txt { padding: 8px; font-size: 15px; font-weight: bold; background: #F7FAFC; border-bottom: 1px dashed #E2E8F0; }
+        .chunk-ans { padding: 6px; font-size: 13px; font-weight: 800; color: #A0AEC0; height: 18px; }
+        .choice-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .choice-btn { flex: 1 1 calc(30% - 10px); padding: 12px 5px; background: #EDF2F7; border: none; border-radius: 10px; font-size: 14px; font-weight: bold; color:#2D3748; cursor: pointer; transition: 0.2s;}
+        .choice-btn:active { background: #CBD5E0; transform: scale(0.95); }
+        .info-box { display: none; background: white; padding: 20px; border-radius: 16px; border: 3px solid var(--light-green); margin-top: 20px; text-align: left; animation: fadeIn 0.4s; box-shadow: 0 8px 20px rgba(72, 187, 120, 0.15); }
+        .info-box.show { display: block; }
+        .info-title { font-size: 18px; font-weight: 900; margin-bottom: 12px; }
+        .detail-row { background: #F7FAFC; padding: 10px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #3182CE; font-size: 14px; font-weight: 600; color: #2D3748;}
+        .step-btn { width: 100%; background: var(--main-green); color: white; padding: 16px; border: none; border-radius: 12px; font-size: 17px; font-weight: 900; margin-top: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(47, 133, 90, 0.3);}
+        .step-btn.blue { background: #3182CE; box-shadow: 0 4px 10px rgba(49, 130, 206, 0.3); }
+        .pattern-alert { animation: fadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: #FFF5F5; border: 4px dashed #FC8181; padding: 25px 20px; border-radius: 16px; margin-top: 25px; box-shadow: 0 8px 20px rgba(229, 62, 62, 0.2); text-align: center; }
+        .pattern-title { font-size: 20px; color: #C53030; font-weight: 900; margin-bottom: 12px; }
+        .pattern-desc { font-size: 20px; color: #E53E3E; font-weight: 900; word-break: keep-all; line-height: 1.4;}
 
         /* 기록 & 오답노트 스타일 */
         .history-card { background: white; border: 2px solid #E2E8F0; border-radius: 12px; padding: 15px; margin-bottom: 12px; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center;}
@@ -116,15 +137,16 @@
     <div class="app-header">
         <div class="logo-icon">🌳</div>
         <h1>수리나무학원</h1>
-        <p>There is/are 구문 훈련</p>
+        <p>Basic Grammar (be동사 종합편)</p>
     </div>
     
     <div class="nav-container">
         <button id="nav-word" class="menu-btn active" onclick="showSection('word-section', this)">1. 단어</button>
         <button id="nav-dictation" class="menu-btn" onclick="showSection('dictation-section', this)">2. 영작</button>
-        <button id="nav-grammar" class="menu-btn" onclick="showSection('grammar-section', this)">3. 문법</button>
-        <button id="nav-history" class="menu-btn" onclick="showSection('history-section', this); renderHistory();">4. 기록</button>
-        <button id="nav-review" class="menu-btn" onclick="showSection('review-section', this); renderReview();" style="background:#FED7D7; color:#C53030;">5. 오답</button>
+        <button id="nav-grammarquiz" class="menu-btn" onclick="showSection('grammarquiz-section', this)">3. 문법</button>
+        <button id="nav-analysis" class="menu-btn" onclick="showSection('analysis-section', this)">4. 분석</button>
+        <button id="nav-history" class="menu-btn" onclick="showSection('history-section', this); renderHistory();">5. 기록</button>
+        <button id="nav-review" class="menu-btn" onclick="showSection('review-section', this); renderReview();" style="background:#FED7D7; color:#C53030;">6. 오답</button>
     </div>
 
     <div id="word-section" class="section active">
@@ -137,7 +159,7 @@
 
         <div id="quiz-screen-word" style="display: none;">
             <div style="overflow: hidden; margin-bottom: 10px;">
-                <div class="status-text" id="word-status" style="float: left;">문제 1 / 42</div>
+                <div class="status-text" id="word-status" style="float: left;">문제 1 / 30</div>
                 <button class="stop-early-btn" onclick="finishWordTest(true)">🛑 중간 채점 (종료)</button>
             </div>
 
@@ -158,7 +180,7 @@
             <div style="font-size: 5rem; margin-bottom: 10px;" id="result-dragon-word">🐉✨</div>
             <h2 style="color: var(--main-green);">테스트 종료!</h2>
             <div class="score-display" id="final-score-word">100점</div>
-            <div style="font-size: 1.2rem; color: #4A5568; font-weight: bold; margin-bottom: 30px;" id="final-detail-word">정답: 42 / 42</div>
+            <div style="font-size: 1.2rem; color: #4A5568; font-weight: bold; margin-bottom: 30px;" id="final-detail-word">정답: 30 / 30</div>
             <button class="start-btn" onclick="resetWordTest()">새로운 알 부화하기 🔄</button>
         </div>
     </div>
@@ -179,10 +201,10 @@
             <button onclick="jumpToSentence()">GO 🚀</button>
         </div>
         <h3 style="color: var(--main-green); margin-bottom: 5px;">듣고 뜻을 보며 단어를 터치하세요</h3>
-        <div class="status-text" id="sentence-status">문제 1 / 16</div>
+        <div class="status-text" id="sentence-status">문제 1 / 17</div>
         <div id="sentence-ko-text" class="korean-meaning">한글 뜻 로딩중...</div>
         
-        <div class="drag-tip">💡 꿀팁: 단어를 잘못 넣었을 땐 가볍게 터치해서 빼거나, <b>꾹 눌러서 스르륵 끌어다 놓기(드래그)</b>로 순서를 바꿀 수 있어요!</div>
+        <div class="drag-tip">💡 꿀팁: 단어를 잘못 넣었을 땐 <b>꾹 눌러서 스르륵 끌어다 놓기(드래그)</b>로 순서를 바꿀 수 있어요!</div>
         
         <div id="answer-area"></div>
         <div id="scrambled-words"></div>
@@ -193,44 +215,90 @@
         </div>
     </div>
 
-    <div id="grammar-section" class="section">
-        <div id="intro-screen-gram">
+    <div id="grammarquiz-section" class="section">
+        <div id="intro-screen-gramquiz">
             <div style="font-size: 4rem; margin-bottom: 10px;">🥚</div>
-            <h2 style="color: var(--main-green);">문법 마스터 용 키우기!</h2>
-            <p style="font-weight: bold; color: #4A5568;">상황에 알맞은 <b>There is / are 구문</b>을 선택하여<br>알을 진화시켜 보세요.</p>
-            <button class="start-btn" onclick="initAudioContext(); startGrammarTest();">문법 퀴즈 시작하기 🚀</button>
+            <h2 style="color: var(--main-green);">be동사 문법 마스터!</h2>
+            <p style="font-weight: bold; color: #4A5568;">상황에 알맞은 <b>be동사</b>를 선택하여<br>알을 진화시켜 보세요.</p>
+            <button class="start-btn" onclick="initAudioContext(); startGramQuizTest();">문법 퀴즈 시작하기 🚀</button>
         </div>
 
-        <div id="quiz-screen-gram" style="display: none;">
+        <div id="quiz-screen-gramquiz" style="display: none;">
             <div style="overflow: hidden; margin-bottom: 10px;">
-                <div class="status-text" id="gram-status" style="float: left;">문제 1 / 13</div>
-                <button class="stop-early-btn" onclick="finishGrammarTest(true)">🛑 중간 채점 (종료)</button>
+                <div class="status-text" id="gramquiz-status" style="float: left;">문제 1 / 40</div>
+                <button class="stop-early-btn" onclick="finishGramQuizTest(true)">🛑 중간 채점 (종료)</button>
             </div>
 
             <div class="evolution-box">
                 <div class="evo-bg-effect"></div>
                 <div class="evo-content">
-                    <div class="evo-emoji" id="gram-evo-emoji">🥚</div>
-                    <div class="evo-text" id="gram-evo-text">신비한 수리나무 알 (0%)</div>
-                    <div class="progress-bg"><div class="progress-bar" id="gram-evo-bar"></div></div>
+                    <div class="evo-emoji" id="gramquiz-evo-emoji">🥚</div>
+                    <div class="evo-text" id="gramquiz-evo-text">신비한 수리나무 알 (0%)</div>
+                    <div class="progress-bg"><div class="progress-bar" id="gramquiz-evo-bar"></div></div>
                 </div>
             </div>
-
-            <div class="korean-meaning" id="gram-ko-text" style="font-size: 16px; margin-top: 0;">한글 뜻</div>
             
-            <div class="grammar-question-box" id="gram-question">
-                <span class="grammar-blank" id="gram-blank-span">___</span> Loading...
-            </div>
+            <div class="grammar-question-box" id="gramquiz-question">
+                </div>
             
-            <div class="gram-options" id="gram-options-container">
+            <div class="gram-options" id="gramquiz-options-container">
                 </div>
         </div>
 
-        <div id="result-screen-gram" style="display: none;">
-            <div style="font-size: 5rem; margin-bottom: 10px;" id="result-dragon-gram">🐉✨</div>
+        <div id="result-screen-gramquiz" style="display: none;">
+            <div style="font-size: 5rem; margin-bottom: 10px;" id="result-dragon-gramquiz">🐉✨</div>
             <h2 style="color: var(--main-green);">문법 훈련 종료!</h2>
             <div class="score-display" style="font-size:2.5rem; color:#3182CE; margin-bottom:30px;">수리나무 마스터 달성!</div>
-            <button class="start-btn" onclick="resetGrammarTest()">새로운 알 부화하기 🔄</button>
+            <button class="start-btn" onclick="resetGramQuizTest()">새로운 알 부화하기 🔄</button>
+        </div>
+    </div>
+
+    <div id="analysis-section" class="section">
+        <div id="intro-screen-analysis">
+            <div style="font-size: 4rem; margin-bottom: 10px;">🥚</div>
+            <h2 style="color: var(--main-green);">문장 마스터 용 키우기!</h2>
+            <p style="font-weight: bold; color: #4A5568;">본문 핵심 문장을 완벽히 분석해서<br>전설의 용으로 진화시켜 보세요.</p>
+            <button class="start-btn" onclick="initAudioContext(); startAnalysisTest();">분석 훈련 시작하기 🚀</button>
+        </div>
+
+        <div id="quiz-screen-analysis" style="display: none;">
+            <div style="overflow: hidden; margin-bottom: 10px;">
+                <span class="status-text" style="background:#C6F6D5; color:var(--main-green); float:left; margin:0;" id="analysis-level-badge">1단계: 품사(구/절) 찾기</span>
+                <button class="stop-early-btn" onclick="finishAnalysisTest(true)">🛑 중간 채점 (종료)</button>
+            </div>
+
+            <div class="evolution-box">
+                <div class="evo-bg-effect"></div>
+                <div class="evo-content">
+                    <div class="evo-emoji" id="analysis-evo-emoji">🥚</div>
+                    <div class="evo-text" id="analysis-evo-text">신비한 수리나무 알 (0%)</div>
+                    <div class="progress-bg"><div class="progress-bar" id="analysis-evo-bar"></div></div>
+                </div>
+            </div>
+
+            <div style="text-align: right; margin-bottom: 5px;">
+                <span class="status-text" style="margin:0; background:transparent;" id="analysis-count">1 / 15</span>
+            </div>
+            
+            <div class="analysis-ko" id="analysis-ko">로딩 중...</div>
+            <div class="analysis-chunks" id="analysis-chunks"></div>
+            <div class="choice-grid" id="analysis-choices"></div>
+            
+            <div id="analysis-step1-exp" class="info-box" style="border-color:#3182CE;">
+                <div class="info-title" style="color:#3182CE;">💡 1단계 완료! 문장 속 진짜 모습은?</div>
+                <div class="info-desc" id="analysis-step1-desc"></div>
+                <div style="margin-top:15px; font-weight:800; color:#E53E3E; text-align:center;">이제 이 덩어리들이 어떤 역할(성분)을 하는지 찾아볼까요?</div>
+                <button class="step-btn blue" onclick="startAnalysisStep2()">2단계: 문장 성분 맞히기 ➔</button>
+            </div>
+
+            <div id="analysis-result-container"></div>
+        </div>
+
+        <div id="result-screen-analysis" style="display: none;">
+            <div style="font-size: 5rem; margin-bottom: 10px;" id="result-dragon-analysis">🐉✨</div>
+            <h2 style="color: var(--main-green);">문장 분석 훈련 종료!</h2>
+            <div class="score-display" style="font-size:2.5rem; color:#3182CE; margin-bottom:30px;">수리나무 마스터 달성!</div>
+            <button class="start-btn" onclick="resetAnalysisTest()">새로운 알 부화하기 🔄</button>
         </div>
     </div>
 
@@ -300,7 +368,7 @@
                 const comboEl = document.getElementById('combo-display');
                 comboEl.innerText = `${comboCount} COMBO! 🔥`;
                 comboEl.classList.remove('animate-combo');
-                void comboEl.offsetWidth; 
+                void comboEl.offsetWidth; // 리플로우 강제 트리거
                 comboEl.classList.add('animate-combo');
             }
         } else {
@@ -309,25 +377,23 @@
     }
 
     // ==========================================
-    // Data Definitions (There is/are/was/were)
+    // Data Definitions (Basic Grammar - 121.pdf)
     // ==========================================
+    // 1. 단어 30개
     const wordList = [
-        { en: "toy car", ko: "장난감 자동차" }, { en: "box", ko: "상자" }, { en: "people", ko: "사람들" },
+        { en: "pencil", ko: "연필" }, { en: "box", ko: "상자" }, { en: "people", ko: "사람들" },
         { en: "pool", ko: "수영장" }, { en: "water", ko: "물" }, { en: "bottle", ko: "병" },
         { en: "orange", ko: "오렌지" }, { en: "basket", ko: "바구니" }, { en: "party", ko: "파티" },
         { en: "last night", ko: "어젯밤" }, { en: "flower", ko: "꽃" }, { en: "vase", ko: "꽃병" },
         { en: "book", ko: "책" }, { en: "bag", ko: "가방" }, { en: "piano", ko: "피아노" },
-        { en: "living room", ko: "거실" }, { en: "pencil", ko: "연필" }, { en: "pencil case", ko: "필통" },
-        { en: "tree", ko: "나무" }, { en: "backyard", ko: "뒷마당" }, { en: "last year", ko: "작년" },
-        { en: "teddy bear", ko: "테디 베어 (곰 인형)" }, { en: "bed", ko: "침대" }, { en: "parking lot", ko: "주차장" },
-        { en: "hill", ko: "언덕" }, { en: "lake", ko: "호수" }, { en: "yesterday", ko: "어제" },
-        { en: "rabbit", ko: "토끼" }, { en: "yard", ko: "마당" }, { en: "snow", ko: "눈" },
-        { en: "winter", ko: "겨울" }, { en: "spider", ko: "거미" }, { en: "busy", ko: "바쁜" },
-        { en: "tired", ko: "피곤한" }, { en: "backpack", ko: "배낭" }, { en: "chair", ko: "의자" },
-        { en: "hour", ko: "시간" }, { en: "lazy", ko: "게으른" }, { en: "interesting", ko: "흥미로운" },
-        { en: "movie", ko: "영화" }, { en: "tourist", ko: "관광객" }, { en: "bookstore", ko: "서점" }
+        { en: "living room", ko: "거실" }, { en: "pencil case", ko: "필통" }, { en: "tree", ko: "나무" },
+        { en: "backyard", ko: "뒷마당" }, { en: "last year", ko: "작년" }, { en: "teddy bear", ko: "곰 인형" },
+        { en: "bed", ko: "침대" }, { en: "parking lot", ko: "주차장" }, { en: "hill", ko: "언덕" },
+        { en: "boat", ko: "보트" }, { en: "lake", ko: "호수" }, { en: "yesterday", ko: "어제" },
+        { en: "rabbit", ko: "토끼" }, { en: "snow", ko: "눈" }, { en: "winter", ko: "겨울" }
     ];
 
+    // 2. 영작 17개
     const sentenceList = [
         { en: "There is a toy car in the box.", ko: "상자 안에 장난감 자동차가 있다." },
         { en: "There are people in the pool.", ko: "수영장에 사람들이 있다." },
@@ -335,33 +401,87 @@
         { en: "There aren't oranges in the basket.", ko: "바구니에 오렌지가 없다." },
         { en: "There wasn't a party last night.", ko: "어젯밤에 파티가 없었다." },
         { en: "Were there flowers in the vase?", ko: "꽃병에 꽃들이 있었니?" },
-        { en: "Is there a book in your bag?", ko: "가방에 책이 있니?" },
+        { en: "Was there a book in your bag?", ko: "가방에 책이 있었니?" },
+        { en: "There are two cars in the parking lot now.", ko: "지금 주차장에 차가 두 대 있다." },
+        { en: "There is a cup of coffee on the table now.", ko: "지금 탁자 위에 커피가 한 잔 있다." },
+        { en: "There were five houses on the hill last year.", ko: "작년에 언덕에 집이 다섯 채 있었다." },
+        { en: "There was a boat in the lake yesterday.", ko: "어제 호수에 보트가 한 척 있었다." },
         { en: "There is a piano in the living room.", ko: "거실에 피아노가 한 대 있다." },
         { en: "There are pencils in the pencil case.", ko: "필통에 연필들이 있다." },
         { en: "There was a tree in the backyard last year.", ko: "작년에 뒷마당에 나무가 한 그루 있었다." },
         { en: "There were teddy bears on the bed.", ko: "침대 위에 테디 베어들이 있었다." },
         { en: "There were two rabbits in the yard.", ko: "마당에 토끼 두 마리가 있었다." },
-        { en: "There was a lot of snow last winter.", ko: "지난 겨울에는 눈이 많이 왔다." },
-        { en: "Are Tom and Emily on Jeju Island?", ko: "탐과 에밀리는 제주도에 있니?" },
-        { en: "There is a backpack under the chair.", ko: "의자 아래에 배낭이 있다." },
-        { en: "There are many tourists in Seoul.", ko: "서울에는 많은 관광객들이 있다." }
+        { en: "There was a lot of snow last winter.", ko: "지난 겨울에는 눈이 많이 왔다." }
     ];
 
-    const grammarList = [
-        { ko: "상자 안에 장난감 자동차가 있다.", enPre: "", options: ["There is", "There are"], enPost: " a toy car in the box.", correct: "There is" },
-        { ko: "수영장에 사람들이 있다.", enPre: "", options: ["There is", "There are"], enPost: " people in the pool.", correct: "There are" },
-        { ko: "병 안에 물이 없다.", enPre: "", options: ["There isn't", "There aren't"], enPost: " water in the bottle.", correct: "There isn't" },
-        { ko: "바구니에 오렌지가 없다.", enPre: "", options: ["There isn't", "There aren't"], enPost: " oranges in the basket.", correct: "There aren't" },
-        { ko: "어젯밤에 파티가 없었다.", enPre: "", options: ["There wasn't", "There weren't"], enPost: " a party last night.", correct: "There wasn't" },
-        { ko: "꽃병에 꽃들이 있었니?", enPre: "", options: ["Was there", "Were there"], enPost: " flowers in the vase?", correct: "Were there" },
-        { ko: "거실에 피아노가 한 대 있다.", enPre: "", options: ["There is", "There are"], enPost: " a piano in the living room.", correct: "There is" },
-        { ko: "작년에 뒷마당에 나무가 한 그루 있었다.", enPre: "", options: ["There was", "There were"], enPost: " a tree in the backyard last year.", correct: "There was" },
-        { ko: "마당에 토끼 두 마리가 없었다.", enPre: "", options: ["There wasn't", "There weren't"], enPost: " two rabbits in the yard.", correct: "There weren't" },
-        { ko: "지난 겨울에는 눈이 많이 왔다.", enPre: "", options: ["There was", "There were"], enPost: " a lot of snow last winter.", correct: "There was" },
-        { ko: "탐과 에밀리는 제주도에 있니?", enPre: "", options: ["Are", "Is"], enPost: " Tom and Emily on Jeju Island?", correct: "Are" },
-        { ko: "의자 아래에 배낭이 있다.", enPre: "", options: ["There is", "There are"], enPost: " a backpack under the chair.", correct: "There is" },
-        { ko: "서울에는 많은 관광객들이 있다.", enPre: "", options: ["There is", "There are"], enPost: " many tourists in Seoul.", correct: "There are" }
+    // 3. 문법 퀴즈 40개 (be동사 긍정/부정/대화형 + There is/are 혼합)
+    const grammarQuizList = [
+        { text: "I <span class='grammar-blank'>___</span> happy.", opts: ["am", "is", "are"], ans: "am" },
+        { text: "You <span class='grammar-blank'>___</span> a great singer.", opts: ["am", "is", "are"], ans: "are" },
+        { text: "He <span class='grammar-blank'>___</span> an actor.", opts: ["am", "is", "are"], ans: "is" },
+        { text: "She <span class='grammar-blank'>___</span> my homeroom teacher.", opts: ["am", "is", "are"], ans: "is" },
+        { text: "It <span class='grammar-blank'>___</span> a soccer ball.", opts: ["am", "is", "are"], ans: "is" },
+        { text: "We <span class='grammar-blank'>___</span> in the library.", opts: ["am", "is", "are"], ans: "are" },
+        { text: "They <span class='grammar-blank'>___</span> monkeys.", opts: ["am", "is", "are"], ans: "are" },
+        { text: "David and I <span class='grammar-blank'>___</span> in the theater.", opts: ["am", "is", "are"], ans: "are" },
+        { text: "The boy <span class='grammar-blank'>___</span> busy today.", opts: ["am", "is", "are"], ans: "is" },
+        { text: "The baseball players <span class='grammar-blank'>___</span> in the park.", opts: ["am", "is", "are"], ans: "are" },
+        
+        { text: "I <span class='grammar-blank'>___</span> not angry.", opts: ["am", "is", "are"], ans: "am" },
+        { text: "He <span class='grammar-blank'>___</span> not a farmer.", opts: ["is", "are", "am"], ans: "is" },
+        { text: "They <span class='grammar-blank'>___</span> not from Korea.", opts: ["are", "is", "am"], ans: "are" },
+        { text: "You <span class='grammar-blank'>___</span> not late for the meeting.", opts: ["are", "is", "am"], ans: "are" },
+        { text: "It <span class='grammar-blank'>___</span> not a pencil.", opts: ["is", "are", "am"], ans: "is" },
+        { text: "We <span class='grammar-blank'>___</span> not dentists.", opts: ["are", "is", "am"], ans: "are" },
+        { text: "She <span class='grammar-blank'>___</span> not a ballerina.", opts: ["is", "are", "am"], ans: "is" },
+        { text: "The movie <span class='grammar-blank'>___</span> not very funny.", opts: ["is", "are", "am"], ans: "is" },
+        { text: "The tigers <span class='grammar-blank'>___</span> not in the park.", opts: ["are", "is", "am"], ans: "are" },
+        { text: "Billy <span class='grammar-blank'>___</span> not at home yesterday.", opts: ["was", "were", "is"], ans: "was" },
+        
+        { text: "<span class='dialogue'>A: Are you a nurse?</span><span class='dialogue'>B: Yes, I <span class='grammar-blank'>___</span>.</span>", opts: ["am", "do", "are"], ans: "am" },
+        { text: "<span class='dialogue'>A: Is he a cook?</span><span class='dialogue'>B: No, he <span class='grammar-blank'>___</span>.</span>", opts: ["isn't", "doesn't", "aren't"], ans: "isn't" },
+        { text: "<span class='dialogue'>A: Are they swimmers?</span><span class='dialogue'>B: Yes, they <span class='grammar-blank'>___</span>.</span>", opts: ["are", "do", "is"], ans: "are" },
+        { text: "<span class='dialogue'>A: Is it Sam's book?</span><span class='dialogue'>B: Yes, it <span class='grammar-blank'>___</span>.</span>", opts: ["is", "are", "does"], ans: "is" },
+        { text: "<span class='dialogue'>A: Are we late for the meeting?</span><span class='dialogue'>B: No, you <span class='grammar-blank'>___</span>.</span>", opts: ["aren't", "don't", "isn't"], ans: "aren't" },
+        { text: "<span class='dialogue'>A: Were you at home?</span><span class='dialogue'>B: Yes, I <span class='grammar-blank'>___</span>.</span>", opts: ["was", "were", "am"], ans: "was" },
+        { text: "<span class='dialogue'>A: Was Billy in the park?</span><span class='dialogue'>B: No, he <span class='grammar-blank'>___</span>.</span>", opts: ["wasn't", "weren't", "isn't"], ans: "wasn't" },
+        { text: "<span class='dialogue'>A: Are you actors?</span><span class='dialogue'>B: Yes, we <span class='grammar-blank'>___</span>.</span>", opts: ["are", "am", "do"], ans: "are" },
+        { text: "<span class='dialogue'>A: Is she an English teacher?</span><span class='dialogue'>B: Yes, she <span class='grammar-blank'>___</span>.</span>", opts: ["is", "are", "does"], ans: "is" },
+        { text: "<span class='dialogue'>A: Are they from Korea?</span><span class='dialogue'>B: No, they <span class='grammar-blank'>___</span>.</span>", opts: ["aren't", "don't", "isn't"], ans: "aren't" },
+
+        { text: "<span class='grammar-blank'>___</span> a toy car in the box.", opts: ["There is", "There are", "There was"], ans: "There is" },
+        { text: "<span class='grammar-blank'>___</span> people in the pool.", opts: ["There are", "There is", "There was"], ans: "There are" },
+        { text: "<span class='grammar-blank'>___</span> water in the bottle.", opts: ["There isn't", "There aren't", "There weren't"], ans: "There isn't" },
+        { text: "<span class='grammar-blank'>___</span> oranges in the basket.", opts: ["There aren't", "There isn't", "There wasn't"], ans: "There aren't" },
+        { text: "<span class='grammar-blank'>___</span> a party last night.", opts: ["There wasn't", "There weren't", "There isn't"], ans: "There wasn't" },
+        { text: "<span class='grammar-blank'>___</span> flowers in the vase?", opts: ["Were there", "Was there", "Are there"], ans: "Were there" },
+        { text: "<span class='grammar-blank'>___</span> a book in your bag?", opts: ["Was there", "Were there", "Is there"], ans: "Was there" },
+        { text: "<span class='grammar-blank'>___</span> two cars in the parking lot now.", opts: ["There are", "There is", "There were"], ans: "There are" },
+        { text: "<span class='grammar-blank'>___</span> a tree in the backyard last year.", opts: ["There was", "There were", "There is"], ans: "There was" },
+        { text: "<span class='grammar-blank'>___</span> teddy bears on the bed.", opts: ["There were", "There was", "There are"], ans: "There were" }
     ];
+
+    // 4. 문장 분석(기존 15문제 - There is/are 특화)
+    const analysisList = [
+        ["상자 안에 장난감 자동차가 있다.", [["There", "부사(구/절)", "수식어"], ["is", "동사", "서술어"], ["a toy car", "명사(구/절)", "주어"], ["in the box", "부사(구/절)", "수식어"]]],
+        ["수영장에 사람들이 있다.", [["There", "부사(구/절)", "수식어"], ["are", "동사", "서술어"], ["people", "명사(구/절)", "주어"], ["in the pool", "부사(구/절)", "수식어"]]],
+        ["어젯밤에 파티가 없었다.", [["There", "부사(구/절)", "수식어"], ["wasn't", "동사", "서술어"], ["a party", "명사(구/절)", "주어"], ["last night", "부사(구/절)", "수식어"]]],
+        ["꽃병에 꽃들이 있었니?", [["Were", "동사", "서술어"], ["there", "부사(구/절)", "수식어"], ["flowers", "명사(구/절)", "주어"], ["in the vase?", "부사(구/절)", "수식어"]]],
+        ["지금 주차장에 차가 두 대 있다.", [["There", "부사(구/절)", "수식어"], ["are", "동사", "서술어"], ["two cars", "명사(구/절)", "주어"], ["in the parking lot", "부사(구/절)", "수식어"], ["now", "부사(구/절)", "수식어"]]],
+        ["거실에 피아노가 한 대 있다.", [["There", "부사(구/절)", "수식어"], ["is", "동사", "서술어"], ["a piano", "명사(구/절)", "주어"], ["in the living room", "부사(구/절)", "수식어"]]],
+        ["작년에 뒷마당에 나무가 한 그루 있었다.", [["There", "부사(구/절)", "수식어"], ["was", "동사", "서술어"], ["a tree", "명사(구/절)", "주어"], ["in the backyard", "부사(구/절)", "수식어"], ["last year", "부사(구/절)", "수식어"]]],
+        ["침대 위에 테디 베어들이 있었다.", [["There", "부사(구/절)", "수식어"], ["were", "동사", "서술어"], ["teddy bears", "명사(구/절)", "주어"], ["on the bed", "부사(구/절)", "수식어"]]],
+        ["지난 겨울에는 눈이 많이 왔다.", [["There", "부사(구/절)", "수식어"], ["was", "동사", "서술어"], ["a lot of snow", "명사(구/절)", "주어"], ["last winter", "부사(구/절)", "수식어"]]],
+        ["탐과 에밀리는 제주도에 있니?", [["Are", "동사", "서술어"], ["Tom and Emily", "명사(구/절)", "주어"], ["on Jeju Island?", "부사(구/절)", "수식어"]]],
+        ["나는 어제 집에 없었다.", [["I", "대명사", "주어"], ["was not", "동사", "서술어"], ["at home", "부사(구/절)", "수식어"], ["yesterday", "부사(구/절)", "수식어"]]],
+        ["너는 게으르지 않다.", [["You", "대명사", "주어"], ["are not", "동사", "서술어"], ["lazy", "형용사(구/절)", "보어"]]],
+        ["그녀와 나는 지금 바쁘다.", [["She and I", "대명사", "주어"], ["are", "동사", "서술어"], ["busy", "형용사(구/절)", "보어"], ["now", "부사(구/절)", "수식어"]]],
+        ["그는 어제 피곤하지 않았다.", [["He", "대명사", "주어"], ["was not", "동사", "서술어"], ["tired", "형용사(구/절)", "보어"], ["yesterday", "부사(구/절)", "수식어"]]],
+        ["그것은 재미있는 영화였다.", [["It", "대명사", "주어"], ["was", "동사", "서술어"], ["an interesting movie", "명사(구/절)", "보어"]]]
+    ];
+
+    const chunkPosList = ["명사(구/절)", "대명사", "동사", "형용사(구/절)", "부사(구/절)"];
+    const roleList = ["주어", "서술어", "목적어", "보어", "수식어"];
 
     function shuffleArray(array) {
         let newArr = [...array];
@@ -378,7 +498,7 @@
 
     function showSection(sectionId, btnElement) {
         stopLooping(); 
-        comboCount = 0; 
+        comboCount = 0; // 탭 이동시 콤보 리셋
         document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.menu-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(sectionId).classList.add('active');
@@ -400,7 +520,7 @@
         else if (ratio < 0.5) { emoji = '🦎'; stageName = '꼬마 드래곤'; }
         else if (ratio < 0.75) { emoji = '🦖'; stageName = '성장하는 파워 용'; }
         else if (ratio < 1.0) { emoji = '🐲'; stageName = '비상하는 매직 용'; }
-        else { emoji = '🐉✨'; stageName = '수리나무 마스터 용!!'; playEvolutionSFX(); } 
+        else { emoji = '🐉✨'; stageName = '수리나무 마스터 용!!'; playEvolutionSFX(); } // 진화 사운드
 
         const percent = Math.floor(ratio * 100);
         const emojiEl = document.getElementById(prefix + '-emoji');
@@ -451,7 +571,7 @@
     function handleWordAnswer(clickedBtn, isCorrect, optionsContainer, currentQ) {
         if (isWordAnswering) return;
         isWordAnswering = true;
-        handleCombo(isCorrect);
+        handleCombo(isCorrect); // 콤보 처리
 
         if (isCorrect) {
             playCorrectSFX();
@@ -459,7 +579,7 @@
         } else {
             playWrongSFX();
             clickedBtn.classList.add('wrong');
-            saveWrongWord(currentQ);
+            saveWrongWord(currentQ); // 오답 노트 저장
             const buttons = optionsContainer.getElementsByClassName('option-btn');
             for(let btn of buttons) { if(btn.innerText.includes(currentQ.ko)) { btn.classList.add('correct'); break; } }
         }
@@ -571,7 +691,7 @@
         const answerArea = document.getElementById('answer-area');
         const studentSentence = Array.from(answerArea.children).map(btn => btn.innerText.trim()).join(' ');
         const targetSentence = sentenceList[currentSentenceIdx].en;
-        const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, ''); 
+        const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, ''); // 대소문자 특수문자 무시
 
         if (normalize(studentSentence) === normalize(targetSentence)) {
             playCorrectSFX(); handleCombo(true);
@@ -605,52 +725,52 @@
     }
 
     // ==========================================
-    // 3. 문법 퀴즈 (There is/are/was/were)
+    // 3. 문법 퀴즈(객관식 40문제)
     // ==========================================
-    let currentGramIdx = 0;
-    let isGramAnswering = false;
-    let gramCorrectCount = 0;
+    let currentGramQuizIdx = 0;
+    let isGramQuizAnswering = false;
+    let gramQuizCorrectCount = 0;
 
-    function startGrammarTest() {
-        currentGramIdx = 0; gramCorrectCount = 0; comboCount = 0;
-        document.getElementById('intro-screen-gram').style.display = 'none';
-        document.getElementById('result-screen-gram').style.display = 'none';
-        document.getElementById('quiz-screen-gram').style.display = 'block';
-        loadGrammarQuestion();
+    function startGramQuizTest() {
+        // 문법 퀴즈는 항상 섞어서 출제
+        shuffleArray(grammarQuizList);
+        currentGramQuizIdx = 0; gramQuizCorrectCount = 0; comboCount = 0;
+        document.getElementById('intro-screen-gramquiz').style.display = 'none';
+        document.getElementById('result-screen-gramquiz').style.display = 'none';
+        document.getElementById('quiz-screen-gramquiz').style.display = 'block';
+        loadGramQuizQuestion();
     }
 
-    function loadGrammarQuestion() {
-        isGramAnswering = false;
-        updateEvolutionUI('gram-evo', currentGramIdx, grammarList.length);
+    function loadGramQuizQuestion() {
+        isGramQuizAnswering = false;
+        updateEvolutionUI('gramquiz-evo', currentGramQuizIdx, grammarQuizList.length);
 
-        const currentQ = grammarList[currentGramIdx];
-        document.getElementById('gram-status').innerText = `문제 ${currentGramIdx + 1} / ${grammarList.length}`;
-        document.getElementById('gram-ko-text').innerText = currentQ.ko;
+        const currentQ = grammarQuizList[currentGramQuizIdx];
+        document.getElementById('gramquiz-status').innerText = `문제 ${currentGramQuizIdx + 1} / ${grammarQuizList.length}`;
         
-        const qBox = document.getElementById('gram-question');
-        qBox.innerHTML = `${currentQ.enPre} <span class="grammar-blank" id="gram-blank-span">___</span> ${currentQ.enPost}`;
+        const qBox = document.getElementById('gramquiz-question');
+        qBox.innerHTML = currentQ.text;
         
-        const optionsDiv = document.getElementById('gram-options-container');
+        const optionsDiv = document.getElementById('gramquiz-options-container');
         optionsDiv.innerHTML = '';
         
-        // 보기들은 설정한 대로 보여주거나 섞어서 보여줌
-        let options = shuffleArray([...currentQ.options]);
+        let options = shuffleArray([...currentQ.opts]);
 
         options.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'gram-btn';
             btn.innerText = opt;
-            btn.onclick = () => handleGrammarAnswer(btn, opt, currentQ.correct);
+            btn.onclick = () => handleGramQuizAnswer(btn, opt, currentQ.ans);
             optionsDiv.appendChild(btn);
         });
     }
 
-    function handleGrammarAnswer(clickedBtn, selectedOption, correctOption) {
-        if (isGramAnswering) return;
-        isGramAnswering = true;
+    function handleGramQuizAnswer(clickedBtn, selectedOption, correctOption) {
+        if (isGramQuizAnswering) return;
+        isGramQuizAnswering = true;
         
-        const blankSpan = document.getElementById('gram-blank-span');
-        blankSpan.innerText = selectedOption;
+        const blankSpan = document.querySelector('#gramquiz-question .grammar-blank');
+        if(blankSpan) blankSpan.innerText = selectedOption;
 
         const isCorrect = (selectedOption === correctOption);
         handleCombo(isCorrect);
@@ -658,65 +778,285 @@
         if (isCorrect) {
             playCorrectSFX();
             clickedBtn.classList.add('correct');
-            blankSpan.classList.add('correct');
-            gramCorrectCount++;
+            if(blankSpan) blankSpan.classList.add('correct');
+            gramQuizCorrectCount++;
             
             setTimeout(() => {
-                currentGramIdx++;
-                if (currentGramIdx < grammarList.length) loadGrammarQuestion(); else finishGrammarTest();
+                currentGramQuizIdx++;
+                if (currentGramQuizIdx < grammarQuizList.length) loadGramQuizQuestion(); else finishGramQuizTest();
             }, 800);
         } else {
             playWrongSFX();
             clickedBtn.classList.add('wrong');
-            blankSpan.classList.add('wrong');
+            if(blankSpan) blankSpan.classList.add('wrong');
             
             setTimeout(() => {
                 clickedBtn.classList.remove('wrong');
-                blankSpan.classList.remove('wrong');
-                blankSpan.innerText = '___';
-                isGramAnswering = false;
+                if(blankSpan) {
+                    blankSpan.classList.remove('wrong');
+                    blankSpan.innerText = '___';
+                }
+                isGramQuizAnswering = false;
             }, 800);
         }
     }
 
-    function finishGrammarTest(isEarly = false) {
-        updateEvolutionUI('gram-evo', currentGramIdx, grammarList.length);
+    function finishGramQuizTest(isEarly = false) {
+        let total = isEarly ? currentGramQuizIdx : grammarQuizList.length;
+        if (total === 0) { resetGramQuizTest(); return; }
+
+        updateEvolutionUI('gramquiz-evo', currentGramQuizIdx, grammarQuizList.length);
         setTimeout(() => {
-            document.getElementById('quiz-screen-gram').style.display = 'none';
-            document.getElementById('result-screen-gram').style.display = 'block';
+            document.getElementById('quiz-screen-gramquiz').style.display = 'none';
+            document.getElementById('result-screen-gramquiz').style.display = 'block';
             if (!isEarly) triggerConfetti();
-            recordGrammarProgress(gramCorrectCount);
+            recordGramQuizProgress(gramQuizCorrectCount);
         }, 500);
     }
 
-    function resetGrammarTest() {
-        document.getElementById('result-screen-gram').style.display = 'none';
-        document.getElementById('intro-screen-gram').style.display = 'block';
+    function resetGramQuizTest() {
+        document.getElementById('result-screen-gramquiz').style.display = 'none';
+        document.getElementById('intro-screen-gramquiz').style.display = 'block';
     }
 
-    function recordGrammarProgress(count) {
+    function recordGramQuizProgress(count) {
         if (count === 0) return;
         const dateKey = getTodayKey(); 
-        let history = JSON.parse(localStorage.getItem('surinamu_grammar_history')) || {};
+        let history = JSON.parse(localStorage.getItem('surinamu_gramquiz_history')) || {};
         if (!history[dateKey]) history[dateKey] = { count: 0 }; 
         history[dateKey].count += count;
-        localStorage.setItem('surinamu_grammar_history', JSON.stringify(history));
+        localStorage.setItem('surinamu_gramquiz_history', JSON.stringify(history));
     }
 
-    function saveHistory(type, data) {
-        let history = JSON.parse(localStorage.getItem(`surinamu_${type}_history`)) || [];
-        history.unshift({ date: formatDate(new Date()), ...data });
-        localStorage.setItem(`surinamu_${type}_history`, JSON.stringify(history));
-    }
 
     // ==========================================
-    // 4. 명예의 전당 (기록)
+    // 4. 문장 분석(기존 방식 15문제)
+    // ==========================================
+    let currentAnalysisIdx = 0;
+    let gramStage = 1; 
+    let activeChunk = 0;
+    let gramAnswers = [];
+
+    function startAnalysisTest() {
+        currentAnalysisIdx = 0; gramStage = 1; comboCount = 0;
+        document.getElementById('intro-screen-analysis').style.display = 'none';
+        document.getElementById('result-screen-analysis').style.display = 'none';
+        document.getElementById('quiz-screen-analysis').style.display = 'block';
+        loadAnalysisQuestion();
+    }
+
+    function loadAnalysisQuestion() {
+        updateEvolutionUI('analysis-evo', currentAnalysisIdx, analysisList.length);
+
+        const d = analysisList[currentAnalysisIdx];
+        let badge = document.getElementById('analysis-level-badge');
+        badge.innerText = "1단계: 품사(구/절) 찾기";
+        badge.style.color = "var(--main-green)";
+        badge.style.background = "#C6F6D5";
+
+        document.getElementById('analysis-count').innerText = `${currentAnalysisIdx + 1} / ${analysisList.length}`;
+        document.getElementById('analysis-ko').innerText = d[0];
+        document.getElementById('analysis-result-container').innerHTML = '';
+        document.getElementById('analysis-step1-exp').classList.remove('show');
+        document.getElementById('analysis-choices').style.display = 'flex';
+        
+        const container = document.getElementById('analysis-chunks');
+        container.innerHTML = '';
+        gramAnswers = new Array(d[1].length).fill(null);
+        activeChunk = 0;
+
+        d[1].forEach((c, i) => {
+            container.innerHTML += `
+                <div class="chunk-card ${i===0?'active':''}" onclick="activeChunk=${i}; renderAnalysisChunks();">
+                    <div class="chunk-txt">${c[0]}</div>
+                    <div class="chunk-ans" id="ans-analysis-${i}">?</div>
+                </div>
+            `;
+        });
+        renderAnalysisChoices();
+    }
+
+    function renderAnalysisChunks() {
+        document.querySelectorAll('#analysis-chunks .chunk-card').forEach((c, i) => {
+            c.classList.toggle('active', i === activeChunk);
+        });
+    }
+
+    function renderAnalysisChoices() {
+        const grid = document.getElementById('analysis-choices');
+        grid.innerHTML = '';
+        const list = (gramStage === 1) ? chunkPosList : roleList;
+        list.forEach(item => {
+            grid.innerHTML += `<button class="choice-btn" onclick="pickAnalysis('${item}')">${item}</button>`;
+        });
+    }
+
+    // 접속사절 -> 역할에 따라 명사/형용사/부사절로 변환, There 유도부사 처리 반영
+    function getSimplePos(detail, role) {
+        if (detail.includes("대명사")) return "대명사";
+        if (detail.includes("동사") && !detail.includes("동명사") && !detail.includes("부정사") && !detail.includes("분사")) return "동사";
+
+        // 접속사절 역할에 따른 분기
+        if (detail.includes("접속사절") || detail.includes("부사절") || detail.includes("명사절") || detail.includes("형용사절")) {
+            if (role === "주어" || role === "목적어" || role === "보어") return "명사(구/절)";
+            if (role === "수식어") return "부사(구/절)"; 
+        }
+        
+        if (detail.includes("명사") || detail.includes("동명사")) return "명사(구/절)";
+        
+        if (role === "보어" && (detail.includes("부정사") || detail.includes("분사") || detail.includes("형용사"))) return "형용사(구/절)";
+        if ((role === "주어" || role === "목적어") && detail.includes("부정사")) return "명사(구/절)";
+        
+        if (detail.includes("형용사") || detail.includes("분사")) return "형용사(구/절)";
+        if (detail.includes("부사") || detail.includes("전치사")) return "부사(구/절)";
+        return "명사(구/절)";
+    }
+
+    function getPattern(roles) {
+        if (roles.includes("목적격보어") || (roles.includes("목적어") && roles.includes("보어"))) return "5형식 (S+V+O+O.C)"; 
+        if (roles.filter(r => r === "목적어").length >= 2 || roles.includes("간접목적어")) return "4형식 (S+V+I.O+D.O)";
+        if (roles.includes("목적어")) return "3형식 (S+V+O)";
+        if (roles.includes("보어")) return "2형식 (S+V+S.C)";
+        return "1형식 (S+V+[M])";
+    }
+
+    function pickAnalysis(val) {
+        const d = analysisList[currentAnalysisIdx];
+        const word = d[1][activeChunk][0];
+        const detailedPos = d[1][activeChunk][1]; 
+        const correctStep2 = d[1][activeChunk][2]; 
+        const correctStep1 = getSimplePos(detailedPos, correctStep2); 
+        
+        const correct = (gramStage === 1) ? correctStep1 : correctStep2;
+        const card = document.querySelectorAll('#analysis-chunks .chunk-card')[activeChunk];
+        
+        if(val === correct) {
+            playCorrectSFX();
+            gramAnswers[activeChunk] = val;
+            document.getElementById(`ans-analysis-${activeChunk}`).innerText = val;
+            document.getElementById(`ans-analysis-${activeChunk}`).style.color = (gramStage===1)?'#2F855A':'#3182CE';
+            card.classList.add('correct');
+            
+            let next = gramAnswers.indexOf(null);
+            if(next !== -1) {
+                activeChunk = next;
+                renderAnalysisChunks();
+            } else {
+                if(gramStage === 1) {
+                    playEvolutionSFX();
+                    let descHtml = d[1].map(c => {
+                        let cWord = c[0]; let detail = c[1]; let simple = getSimplePos(detail, c[2]);
+                        
+                        // There 유도부사 설명 추가
+                        if (cWord.toLowerCase() === "there" || cWord.toLowerCase() === "were there" || cWord.toLowerCase() === "was there") {
+                             return `<div class="detail-row"><b>${cWord}</b>에서 'there'는 문장을 이끄는 유도부사로, 진짜 주어는 뒤에 나오는 명사입니다.</div>`;
+                        }
+                        
+                        if (detail === simple || detail === "대명사" || detail === "동사") return ""; 
+                        
+                        if (detail.includes("절")) {
+                            return `<div class="detail-row"><b>${cWord}</b>는 문장 구조를 이끄는 <b>[${detail}]</b>로서 이 안에서 <b>${simple}</b> 역할을 했어요.</div>`;
+                        }
+
+                        return `<div class="detail-row"><b>${cWord}</b>는 <b>[${detail}]</b> 형태로서 이 안에서 <b>${simple}</b> 역할을 했어요.</div>`;
+                    }).join('');
+                    if(descHtml === "") descHtml = "<div class='detail-row'>이 문장은 복잡한 구나 절 없이 기본 단어들로 깔끔하게 이루어져 있어요!</div>";
+
+                    document.getElementById('analysis-choices').style.display = 'none';
+                    document.getElementById('analysis-step1-desc').innerHTML = descHtml;
+                    document.getElementById('analysis-step1-exp').classList.add('show');
+                } else {
+                    playEvolutionSFX();
+                    let patternStr = getPattern(d[1].map(c => c[2]));
+                    document.getElementById('analysis-choices').style.display = 'none';
+                    document.getElementById('analysis-result-container').innerHTML = `
+                        <div class="pattern-alert">
+                            <div class="pattern-title">🎉 완벽하게 분석했습니다!</div>
+                            <div class="pattern-desc">${patternStr}</div>
+                            <button class="step-btn blue" style="margin-top:20px;" onclick="nextAnalysis()">다음 문장 분석하기 ➔</button>
+                        </div>
+                    `;
+                    recordAnalysisProgress();
+                }
+            }
+        } else {
+            playWrongSFX();
+            card.style.borderColor = '#E53E3E';
+            setTimeout(()=> {
+                if(card.classList.contains('active')) card.style.borderColor = '#3182CE';
+                else card.style.borderColor = '#CBD5E0';
+            }, 600);
+        }
+    }
+    
+    function startAnalysisStep2() {
+        document.getElementById('analysis-step1-exp').classList.remove('show');
+        gramStage = 2;
+        let badge = document.getElementById('analysis-level-badge');
+        badge.innerText = "2단계: 문장 성분 맞히기";
+        badge.style.color = "#3182CE";
+        badge.style.background = "#EBF8FF";
+        
+        document.querySelectorAll('#analysis-chunks .chunk-card').forEach(c => { c.classList.remove('correct'); c.style.backgroundColor='white'; });
+        document.querySelectorAll('#analysis-chunks .chunk-ans').forEach(a => { a.innerText = "?"; a.style.color = "#A0AEC0"; });
+        document.getElementById('analysis-choices').style.display = 'flex';
+        
+        gramAnswers.fill(null);
+        activeChunk = 0;
+        renderAnalysisChunks();
+        renderAnalysisChoices();
+    }
+
+    function nextAnalysis() {
+        currentAnalysisIdx++;
+        if(currentAnalysisIdx < analysisList.length) {
+            gramStage = 1;
+            loadAnalysisQuestion();
+        } else {
+            updateEvolutionUI('analysis-evo', analysisList.length, analysisList.length);
+            setTimeout(() => {
+                document.getElementById('quiz-screen-analysis').style.display = 'none';
+                document.getElementById('result-screen-analysis').style.display = 'block';
+                triggerConfetti();
+            }, 500);
+        }
+    }
+
+    function finishAnalysisTest(isEarly = false) {
+        let total = isEarly ? currentAnalysisIdx : analysisList.length;
+        if (total === 0) { resetAnalysisTest(); return; }
+
+        updateEvolutionUI('analysis-evo', currentAnalysisIdx, analysisList.length);
+        setTimeout(() => {
+            document.getElementById('quiz-screen-analysis').style.display = 'none';
+            document.getElementById('result-screen-analysis').style.display = 'block';
+            if (!isEarly) triggerConfetti();
+        }, 500);
+    }
+
+    function resetAnalysisTest() {
+        document.getElementById('result-screen-analysis').style.display = 'none';
+        document.getElementById('intro-screen-analysis').style.display = 'block';
+    }
+
+    function recordAnalysisProgress() {
+        const dateKey = getTodayKey(); 
+        let history = JSON.parse(localStorage.getItem('surinamu_analysis_history')) || {};
+        if (!history[dateKey]) history[dateKey] = { count: 0 }; 
+        history[dateKey].count++;
+        localStorage.setItem('surinamu_analysis_history', JSON.stringify(history));
+    }
+
+
+    // ==========================================
+    // 5. 명예의 전당 (기록)
     // ==========================================
     function renderHistory() {
         const historyList = document.getElementById('history-list'); historyList.innerHTML = '';
         let wordHistory = JSON.parse(localStorage.getItem('surinamu_word_score_history')) || [];
         let dictHistory = JSON.parse(localStorage.getItem('surinamu_dictation_history')) || {};
-        let gramHistory = JSON.parse(localStorage.getItem('surinamu_grammar_history')) || {};
+        let gramQuizHistory = JSON.parse(localStorage.getItem('surinamu_gramquiz_history')) || {};
+        let analysisHistory = JSON.parse(localStorage.getItem('surinamu_analysis_history')) || {};
 
         const wordTitle = document.createElement('div'); wordTitle.className = 'history-category'; wordTitle.innerHTML = '📝 단어 테스트 성적'; historyList.appendChild(wordTitle);
         if(wordHistory.length === 0) { historyList.insertAdjacentHTML('beforeend', '<p style="color:#A0AEC0; font-size:14px;">응시 기록이 없습니다.</p>'); } 
@@ -737,19 +1077,29 @@
             });
         }
 
-        const gramTitle = document.createElement('div'); gramTitle.className = 'history-category'; gramTitle.innerHTML = '🧩 문법(There is/are) 퀴즈 달성도'; historyList.appendChild(gramTitle);
-        const gramDates = Object.keys(gramHistory).sort((a, b) => new Date(b) - new Date(a));
-        if(gramDates.length === 0) { historyList.insertAdjacentHTML('beforeend', '<p style="color:#A0AEC0; font-size:14px;">분석 기록이 없습니다.</p>'); } 
+        const gramQuizTitle = document.createElement('div'); gramQuizTitle.className = 'history-category'; gramQuizTitle.innerHTML = '🎯 문법 퀴즈 달성도'; historyList.appendChild(gramQuizTitle);
+        const gramQuizDates = Object.keys(gramQuizHistory).sort((a, b) => new Date(b) - new Date(a));
+        if(gramQuizDates.length === 0) { historyList.insertAdjacentHTML('beforeend', '<p style="color:#A0AEC0; font-size:14px;">분석 기록이 없습니다.</p>'); } 
         else {
-            gramDates.slice(0, 3).forEach(date => {
-                const data = gramHistory[date]; let stamp = data.count >= 10 ? '<span class="stamp-excellent" style="font-size:14px;">문법 마스터! 🐉</span>' : ''; 
+            gramQuizDates.slice(0, 3).forEach(date => {
+                const data = gramQuizHistory[date]; let stamp = data.count >= 20 ? '<span class="stamp-excellent" style="font-size:14px;">문법 마스터! 🐉</span>' : ''; 
                 historyList.insertAdjacentHTML('beforeend', `<div class="history-card"><div class="history-info"><span class="history-date">${date.replace(/-/g, '. ')}</span><span class="history-score">${data.count}문제 <span style="font-size:14px; color:#A0AEC0;">풀이완료</span></span></div>${stamp}</div>`);
+            });
+        }
+
+        const analysisTitle = document.createElement('div'); analysisTitle.className = 'history-category'; analysisTitle.innerHTML = '🧩 문장 분석 달성도'; historyList.appendChild(analysisTitle);
+        const analysisDates = Object.keys(analysisHistory).sort((a, b) => new Date(b) - new Date(a));
+        if(analysisDates.length === 0) { historyList.insertAdjacentHTML('beforeend', '<p style="color:#A0AEC0; font-size:14px;">분석 기록이 없습니다.</p>'); } 
+        else {
+            analysisDates.slice(0, 3).forEach(date => {
+                const data = analysisHistory[date]; let stamp = data.count >= 10 ? '<span class="stamp-excellent" style="font-size:14px;">분석 마스터! 🐉</span>' : ''; 
+                historyList.insertAdjacentHTML('beforeend', `<div class="history-card"><div class="history-info"><span class="history-date">${date.replace(/-/g, '. ')}</span><span class="history-score">${data.count}문장 <span style="font-size:14px; color:#A0AEC0;">분석완료</span></span></div>${stamp}</div>`);
             });
         }
     }
 
     // ==========================================
-    // 5. 오답 복습 기능 (나만의 몬스터 도감)
+    // 6. 오답 복습 기능 (나만의 몬스터 도감)
     // ==========================================
     function saveWrongWord(wordObj) {
         let list = JSON.parse(localStorage.getItem('surinamu_wrong_words') || '[]');
