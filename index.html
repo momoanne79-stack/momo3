@@ -3,890 +3,544 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>수리나무학원 - What a Useful Number!</title>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <title>수리나무학원 Grammar Only 1</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --main: #1a5c9a;
-            --accent: #f5a623;
-            --light: #e8f4fd;
-            --bg: #f0f7ff;
-            --text: #1a2a3a;
-            --green: #27ae60;
-            --red: #e74c3c;
-            --shadow: 0 8px 32px rgba(26,92,154,0.13);
+            --main: #6c3fa0;
+            --main2: #4a2070;
+            --accent: #f0b429;
+            --accent2: #e8960a;
+            --light: #f5f0ff;
+            --bg: #faf8ff;
+            --text: #1e1530;
+            --green: #22c55e;
+            --red: #ef4444;
+            --shadow: 0 8px 40px rgba(108,63,160,0.15);
         }
-        * { box-sizing: border-box; }
-        body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background: var(--bg); margin: 0; padding: 16px; color: var(--text); }
-        #app { max-width: 480px; margin: 0 auto; background: white; border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; padding-bottom: 30px; position: relative; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; }
+
+        #app { max-width: 480px; margin: 0 auto; background: white; border-radius: 28px; box-shadow: var(--shadow); overflow: hidden; position: relative; padding-bottom: 32px; }
 
         /* HEADER */
-        .header { background: linear-gradient(135deg, #1a5c9a 0%, #0d3d6b 100%); color: white; padding: 30px 20px 22px; text-align: center; }
-        .header-badge { background: var(--accent); color: white; font-size: 11px; font-weight: 900; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; letter-spacing: 1px; }
-        .header h1 { margin: 0 0 4px; font-size: 22px; font-weight: 900; line-height: 1.2; }
-        .header p { margin: 0; font-size: 13px; opacity: 0.8; }
+        .header { background: linear-gradient(145deg, #6c3fa0 0%, #3d1a6e 60%, #2d1155 100%); padding: 32px 20px 24px; text-align: center; position: relative; overflow: hidden; }
+        .header::before { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:rgba(255,255,255,0.05); border-radius:50%; }
+        .header::after  { content:''; position:absolute; bottom:-30px; left:-20px; width:100px; height:100px; background:rgba(240,180,41,0.08); border-radius:50%; }
+        .header-badge { background: var(--accent); color: #3d1a00; font-size: 11px; font-weight: 900; padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
+        .header h1 { color: white; font-size: 24px; font-weight: 900; line-height: 1.2; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .header p { color: rgba(255,255,255,0.75); font-size: 13px; margin-top: 6px; }
 
-        /* NAV */
-        .nav { display: flex; padding: 12px 12px 0; gap: 6px; flex-wrap: wrap; }
-        .nav-btn { flex: 1 1 calc(20% - 6px); min-width: 55px; padding: 9px 4px; border: none; border-radius: 10px; background: #edf2f7; color: #4a5568; font-size: 12px; font-weight: 700; cursor: pointer; transition: .2s; }
-        .nav-btn:hover { background: #dbe4f0; }
-        .nav-btn.active { background: var(--main); color: white; }
-        .nav-btn.review-btn { background: #fde8e8; color: var(--red); }
-        .nav-btn.review-btn.active { background: var(--red); color: white; }
+        /* UNIT TABS */
+        .unit-tabs { display: flex; gap: 6px; padding: 14px 14px 0; flex-wrap: wrap; }
+        .unit-btn { flex: 1 1 calc(33% - 6px); padding: 8px 4px; border: none; border-radius: 10px; background: #f0ebff; color: #6c3fa0; font-size: 12px; font-weight: 800; cursor: pointer; transition: .2s; }
+        .unit-btn:hover { background: #e0d5ff; }
+        .unit-btn.active { background: var(--main); color: white; box-shadow: 0 3px 10px rgba(108,63,160,0.3); }
+        .unit-btn.done { background: var(--green); color: white; }
 
         /* SECTIONS */
-        .section { display: none; padding: 16px 18px 0; animation: fadeIn .35s; }
+        .section { display: none; padding: 16px 18px 0; animation: fadeIn .3s; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+        /* INTRO */
+        .intro-wrap { text-align: center; padding: 20px 10px 10px; }
+        .intro-icon { font-size: 4rem; margin-bottom: 10px; }
+        .intro-wrap h2 { color: var(--main); font-size: 20px; font-weight: 900; margin-bottom: 8px; }
+        .intro-wrap p { color: #718096; font-size: 14px; font-weight: 600; line-height: 1.7; }
 
         /* EVO BOX */
-        .evo-box { background: var(--light); border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1.5px solid #c9dff5; position: relative; overflow: hidden; }
-        .evo-emoji { font-size: 3rem; display: inline-block; transition: transform .3s cubic-bezier(.17,.89,.32,1.27); }
-        .evo-name { font-size: 15px; font-weight: 900; color: var(--main); margin: 4px 0 10px; }
-        .prog-bg { background: #dbe9f7; height: 12px; border-radius: 8px; overflow: hidden; }
-        .prog-bar { background: linear-gradient(90deg, #f5a623, #1a5c9a); height: 100%; width: 0%; transition: width .5s ease; border-radius: 8px; }
+        .evo-box { background: var(--light); border-radius: 16px; padding: 14px 16px; margin-bottom: 14px; border: 1.5px solid #d8ccf5; }
+        .evo-emoji { font-size: 2.6rem; display: inline-block; transition: transform .3s cubic-bezier(.17,.89,.32,1.27); }
+        .evo-name { font-size: 13px; font-weight: 900; color: var(--main); margin: 3px 0 8px; }
+        .prog-bg { background: #e8e0f5; height: 10px; border-radius: 8px; overflow: hidden; }
+        .prog-bar { background: linear-gradient(90deg, var(--accent), var(--main)); height: 100%; width: 0%; transition: width .5s ease; border-radius: 8px; }
 
         /* STATUS ROW */
         .status-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .status-badge { background: #edf2f7; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; color: #4a5568; }
-        .stop-btn { background: #edf2f7; border: none; padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; color: #4a5568; }
+        .status-badge { background: #f0ebff; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; color: var(--main); }
+        .stop-btn { background: #f0ebff; border: none; padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; color: #718096; }
 
-        /* WORD TEST */
-        .word-display { font-size: 2rem; font-weight: 900; color: var(--main); margin: 16px 0 24px; text-align: center; word-break: keep-all; line-height: 1.3; }
-        .options-grid { display: grid; gap: 10px; margin-bottom: 16px; }
-        .opt-btn { background: white; border: 2px solid #dbe4f0; padding: 14px 16px; border-radius: 13px; font-size: 15px; font-weight: 700; cursor: pointer; text-align: left; transition: .15s; color: var(--text); }
+        /* UNIT LABEL */
+        .unit-label { display: inline-block; background: var(--accent); color: #3d1a00; font-size: 11px; font-weight: 900; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; letter-spacing: 1px; }
+
+        /* QUESTION BOX */
+        .q-box { background: var(--light); border: 2px solid #d8ccf5; border-radius: 16px; padding: 20px 16px; margin-bottom: 16px; font-size: 18px; font-weight: 800; color: var(--text); line-height: 1.6; word-break: keep-all; text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+        .blank { display: inline-block; min-width: 70px; border-bottom: 3px solid var(--main); color: var(--main); font-weight: 900; text-align: center; padding: 0 8px; transition: .3s; }
+        .blank.correct { color: var(--green); border-color: var(--green); }
+        .blank.wrong   { color: var(--red);   border-color: var(--red);   }
+
+        /* KO HINT */
+        .ko-hint { background: #fffbeb; border-left: 4px solid var(--accent); border-radius: 10px; padding: 10px 14px; font-size: 14px; font-weight: 800; color: #7d4800; margin-bottom: 14px; line-height: 1.5; word-break: keep-all; }
+
+        /* OPTIONS */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+        .opt-btn { background: white; border: 2px solid #e0d5ff; padding: 14px 10px; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; transition: .15s; color: var(--text); text-align: center; }
         .opt-btn:hover { border-color: var(--main); background: var(--light); }
-        .opt-btn.correct { background: #d4edda; border-color: var(--green); color: var(--green); transform: scale(1.02); }
-        .opt-btn.wrong { background: #fde8e8; border-color: var(--red); color: var(--red); animation: shake .4s; }
+        .opt-btn.correct { background: #dcfce7; border-color: var(--green); color: #166534; transform: scale(1.03); }
+        .opt-btn.wrong   { background: #fee2e2; border-color: var(--red);   color: #991b1b; animation: shake .4s; }
 
-        /* DICTATION */
-        .ko-meaning { background: #fff8f0; border-left: 4px solid var(--accent); border-radius: 10px; padding: 13px 15px; font-size: 16px; font-weight: 800; color: #7d4800; margin-bottom: 14px; word-break: keep-all; line-height: 1.5; }
-        #answer-area { min-height: 58px; border: 2px dashed var(--main); background: var(--light); padding: 12px; border-radius: 13px; display: flex; flex-wrap: wrap; gap: 7px; align-items: center; justify-content: center; margin-bottom: 10px; transition: background .3s; }
-        #scramble-area { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; min-height: 44px; margin-bottom: 14px; }
-        .word-chip { background: white; border: 2px solid #c9dff5; padding: 9px 14px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: .15s; user-select: none; touch-action: manipulation; }
-        .word-chip:active { transform: translateY(2px); }
-        .sortable-ghost { opacity: .35; background: #edf2f7 !important; }
-        .sortable-drag { background: var(--main) !important; color: white !important; transform: scale(1.06) !important; }
-        .drag-tip { background: #fffbeb; border: 1px solid #f6c94e; color: #8a6300; font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; line-height: 1.5; }
-        .audio-row { display: flex; gap: 8px; margin-top: 10px; }
-        .audio-btn { flex: 1; padding: 11px; border: none; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; color: white; transition: .2s; }
-        .speed-btn { background: #718096; }
-        .play-btn { background: #3182ce; }
-        .play-btn.playing { background: var(--red); }
+        /* RESULT */
+        .result-wrap { text-align: center; padding: 20px 10px; }
+        .result-emoji { font-size: 4.5rem; margin-bottom: 10px; }
+        .score-big { font-size: 3.5rem; font-weight: 900; color: var(--main); margin: 10px 0 4px; }
+        .score-detail { font-size: 15px; color: #718096; font-weight: 700; margin-bottom: 6px; }
+        .score-pct { font-size: 14px; font-weight: 800; margin-bottom: 20px; }
 
-        /* ANALYSIS */
-        .analysis-ko { background: #ebf8ff; border-left: 4px solid var(--main); border-radius: 10px; padding: 13px 15px; font-size: 15px; font-weight: 800; color: #0d3d6b; margin-bottom: 14px; word-break: keep-all; line-height: 1.5; }
-        .stage-badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; }
-        .stage1 { background: #c6f6d5; color: #276749; }
-        .stage2 { background: #bee3f8; color: #1a5c9a; }
-        .chunks-wrap { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 14px; }
-        .chunk-card { border: 2px solid #dbe4f0; border-radius: 10px; min-width: 68px; background: white; cursor: pointer; overflow: hidden; transition: .2s; }
-        .chunk-card.active { border-color: var(--main); box-shadow: 0 0 0 3px rgba(26,92,154,.15); transform: translateY(-2px); }
-        .chunk-card.done { border-color: var(--green); background: #f0fff4; pointer-events: none; }
-        .chunk-card.done-2 { border-color: #3182ce; background: #ebf8ff; pointer-events: none; }
-        .chunk-en { padding: 7px 8px; font-size: 13px; font-weight: 800; background: #f7fafc; border-bottom: 1px dashed #e2e8f0; text-align: center; }
-        .chunk-ans { padding: 5px 6px; font-size: 11px; font-weight: 900; color: #a0aec0; text-align: center; min-height: 22px; }
-        .choices-wrap { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 10px; }
-        .choice-btn { flex: 1 1 calc(33% - 8px); padding: 11px 6px; background: #edf2f7; border: none; border-radius: 10px; font-size: 13px; font-weight: 800; color: var(--text); cursor: pointer; transition: .15s; }
-        .choice-btn:active { background: #cbd5e0; transform: scale(.96); }
-        .info-box { display: none; background: white; border: 2.5px solid var(--green); border-radius: 14px; padding: 18px; margin-top: 14px; animation: fadeIn .35s; }
-        .info-box.show { display: block; }
-        .info-title { font-size: 16px; font-weight: 900; margin-bottom: 10px; }
-        .detail-row { background: #f7fafc; padding: 9px 12px; border-radius: 8px; margin-bottom: 7px; border-left: 3px solid var(--main); font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.5; }
-        .pattern-box { background: #fff8f0; border: 3px dashed var(--accent); border-radius: 14px; padding: 20px; text-align: center; margin-top: 14px; animation: fadeIn .4s; }
-        .pattern-title { font-size: 17px; color: #7d4800; font-weight: 900; margin-bottom: 8px; }
-        .pattern-val { font-size: 19px; color: var(--main); font-weight: 900; }
+        /* UNIT BREAKDOWN */
+        .breakdown { background: var(--light); border-radius: 14px; padding: 14px; margin-bottom: 16px; text-align: left; }
+        .breakdown h3 { font-size: 14px; font-weight: 900; color: var(--main); margin-bottom: 10px; }
+        .bd-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dashed #e0d5ff; font-size: 13px; font-weight: 700; }
+        .bd-row:last-child { border-bottom: none; }
+        .bd-score { font-weight: 900; color: var(--main); }
+        .bd-bar-bg { background: #e0d5ff; height: 6px; border-radius: 4px; flex: 1; margin: 0 10px; overflow: hidden; }
+        .bd-bar { background: var(--main); height: 100%; border-radius: 4px; transition: width .6s ease; }
 
-        /* COMMON BTNS */
-        .primary-btn { width: 100%; background: var(--main); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 900; cursor: pointer; transition: .2s; box-shadow: 0 4px 12px rgba(26,92,154,.25); margin-top: 14px; }
-        .primary-btn:hover { background: #1565b0; transform: translateY(-1px); }
-        .primary-btn.green { background: var(--green); box-shadow: 0 4px 12px rgba(39,174,96,.25); }
-        .primary-btn.blue { background: #3182ce; box-shadow: 0 4px 12px rgba(49,130,206,.25); }
-        .score-big { font-size: 3.5rem; font-weight: 900; color: var(--main); margin: 16px 0 4px; }
-        .score-detail { font-size: 15px; color: #718096; font-weight: 700; margin-bottom: 20px; }
-        .result-emoji { font-size: 4.5rem; margin: 10px 0; }
-
-        /* INTRO SCREEN */
-        .intro-wrap { text-align: center; padding: 20px 10px; }
-        .intro-wrap h2 { color: var(--main); font-size: 20px; margin: 10px 0 6px; }
-        .intro-wrap p { color: #718096; font-weight: 700; font-size: 14px; line-height: 1.6; }
-        .intro-icon { font-size: 4rem; }
-
-        /* HISTORY */
-        .hist-category { background: #edf2f7; padding: 8px 12px; border-radius: 8px; font-size: 14px; font-weight: 800; margin: 16px 0 10px; border-left: 4px solid #4a5568; }
-        .hist-card { background: white; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 13px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .hist-date { font-size: 13px; color: #718096; font-weight: 700; }
-        .hist-score { font-size: 19px; font-weight: 900; color: var(--green); }
-        .stamp { color: var(--red); font-weight: 900; font-size: 15px; border: 2.5px solid var(--red); padding: 3px 8px; border-radius: 8px; transform: rotate(-8deg); display: inline-block; }
-
-        /* REVIEW */
-        .wrong-item { display: flex; justify-content: space-between; align-items: center; background: #fff5f5; padding: 11px 14px; border-radius: 10px; margin-bottom: 8px; border-left: 4px solid var(--red); }
-        .wrong-en { font-weight: 900; font-size: 17px; color: #c0392b; }
-        .wrong-ko { font-size: 13px; color: #718096; font-weight: 600; }
-        .del-btn { background: #edf2f7; border: none; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; color: #718096; }
+        /* WRONG REVIEW */
+        .wrong-section { background: #fff5f5; border: 2px solid #fecaca; border-radius: 14px; padding: 14px; margin-bottom: 16px; text-align: left; }
+        .wrong-section h3 { font-size: 14px; font-weight: 900; color: var(--red); margin-bottom: 10px; }
+        .wrong-item { padding: 8px 10px; background: white; border-radius: 8px; margin-bottom: 6px; border-left: 3px solid var(--red); }
+        .wrong-q { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+        .wrong-ans { font-size: 12px; color: #718096; }
+        .wrong-ans b { color: var(--green); }
 
         /* COMBO */
-        #combo { position: absolute; top: 28%; left: 50%; transform: translate(-50%,-50%) scale(.5); font-size: 3rem; font-weight: 900; color: #dd6b20; text-shadow: 0 3px 10px rgba(221,107,32,.4); opacity: 0; pointer-events: none; z-index: 99; }
+        #combo { position: absolute; top: 30%; left: 50%; transform: translate(-50%,-50%) scale(.5); font-size: 2.8rem; font-weight: 900; color: var(--accent); text-shadow: 0 3px 10px rgba(240,180,41,.5); opacity: 0; pointer-events: none; z-index: 99; }
         .combo-pop { animation: comboAnim 1s cubic-bezier(.17,.89,.32,1.27) forwards; }
-        @keyframes comboAnim { 0%{opacity:0;transform:translate(-50%,-30%) scale(.5)} 20%{opacity:1;transform:translate(-50%,-50%) scale(1.2)} 80%{opacity:1;transform:translate(-50%,-50%) scale(1)} 100%{opacity:0;transform:translate(-50%,-60%) scale(.8)} }
-        @keyframes shake { 0%{transform:translateX(0)} 25%{transform:translateX(-5px)} 50%{transform:translateX(5px)} 75%{transform:translateX(-5px)} 100%{transform:translateX(0)} }
 
-        /* SETUP */
-        .setup-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 14px; background: white; border: 1.5px solid #e2e8f0; padding: 10px 14px; border-radius: 12px; }
-        .setup-row input { padding: 6px 8px; font-size: 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; width: 55px; text-align: center; }
-        .setup-row button { padding: 7px 13px; background: var(--text); color: white; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; }
+        /* BTNS */
+        .primary-btn { width: 100%; background: var(--main); color: white; border: none; padding: 15px; border-radius: 14px; font-size: 16px; font-weight: 900; cursor: pointer; transition: .2s; box-shadow: 0 4px 14px rgba(108,63,160,.3); margin-top: 12px; }
+        .primary-btn:hover { background: var(--main2); transform: translateY(-1px); }
+        .primary-btn.yellow { background: var(--accent); color: #3d1a00; box-shadow: 0 4px 14px rgba(240,180,41,.3); }
+        .primary-btn.yellow:hover { background: var(--accent2); }
+
+        /* HISTORY */
+        .hist-category { background: #f0ebff; padding: 8px 12px; border-radius: 8px; font-size: 14px; font-weight: 800; margin: 14px 0 10px; border-left: 4px solid var(--main); color: var(--main); }
+        .hist-card { background: white; border: 1.5px solid #e0d5ff; border-radius: 12px; padding: 12px 14px; margin-bottom: 9px; display: flex; justify-content: space-between; align-items: center; }
+        .hist-date { font-size: 12px; color: #718096; font-weight: 700; }
+        .hist-score-text { font-size: 18px; font-weight: 900; color: var(--main); }
+        .stamp { color: var(--red); font-weight: 900; font-size: 13px; border: 2px solid var(--red); padding: 3px 7px; border-radius: 8px; transform: rotate(-8deg); display: inline-block; }
+
+        /* NAV */
+        .nav { display: flex; gap: 6px; padding: 12px 14px 0; }
+        .nav-btn { flex: 1; padding: 9px 2px; border: none; border-radius: 10px; background: #f0ebff; color: var(--main); font-size: 12px; font-weight: 700; cursor: pointer; transition: .2s; }
+        .nav-btn.active { background: var(--main); color: white; }
+
+        @keyframes comboAnim { 0%{opacity:0;transform:translate(-50%,-30%) scale(.5)} 20%{opacity:1;transform:translate(-50%,-50%) scale(1.2)} 80%{opacity:1;transform:translate(-50%,-50%) scale(1)} 100%{opacity:0;transform:translate(-50%,-60%) scale(.8)} }
+        @keyframes shake { 0%{transform:translateX(0)} 25%{transform:translateX(-6px)} 50%{transform:translateX(6px)} 75%{transform:translateX(-6px)} 100%{transform:translateX(0)} }
     </style>
 </head>
 <body>
 <div id="app">
     <div id="combo"></div>
     <div class="header">
-        <div class="header-badge">NONFICTION · Theme: Math</div>
-        <h1>📖 What a Useful Number!</h1>
-        <p>수리나무학원 스마트 영어 학습</p>
+        <div class="header-badge">Grammar Only 1</div>
+        <h1>📚 수리나무학원<br>문법 집중 훈련</h1>
+        <p>Unit 03~08 · 인칭대명사 · 지시대명사 · be동사</p>
     </div>
 
     <div class="nav">
-        <button class="nav-btn active" onclick="showSection('word-sec',this)">1. 단어</button>
-        <button class="nav-btn" onclick="showSection('dict-sec',this)">2. 영작</button>
-        <button class="nav-btn" onclick="showSection('analysis-sec',this)">3. 분석</button>
-        <button class="nav-btn" onclick="showSection('hist-sec',this);renderHistory()">4. 기록</button>
-        <button class="nav-btn review-btn" onclick="showSection('review-sec',this);renderReview()">5. 오답</button>
+        <button class="nav-btn active" onclick="showTab('quiz-tab', this)">문법 퀴즈</button>
+        <button class="nav-btn" onclick="showTab('hist-tab', this); renderHistory()">기록</button>
     </div>
 
-    <!-- ===== 1. WORD TEST ===== -->
-    <div id="word-sec" class="section active">
-        <div id="word-intro" class="intro-wrap">
+    <!-- ===== QUIZ TAB ===== -->
+    <div id="quiz-tab" class="section active">
+        <!-- INTRO -->
+        <div id="g-intro" class="intro-wrap">
             <div class="intro-icon">🥚</div>
-            <h2>전설의 용 키우기!</h2>
-            <p>지문 핵심 단어를 맞히며<br>알을 멋진 용으로 진화시켜 보세요.</p>
-            <button class="primary-btn" onclick="initAudio();startWordTest()">테스트 시작하기 🚀</button>
+            <h2>문법 마스터 용 키우기!</h2>
+            <p>Unit 03~08 핵심 문법을<br>50문제로 완벽 정복해 보세요.<br><br>
+            <span style="color:var(--main);font-weight:900">인칭대명사 · 지시대명사<br>be동사 현재/부정/과거 · There is/are</span></p>
+            <button class="primary-btn" onclick="initAudio();startQuiz()">퀴즈 시작하기 🚀</button>
         </div>
-        <div id="word-quiz" style="display:none">
+
+        <!-- QUIZ SCREEN -->
+        <div id="g-quiz" style="display:none">
             <div class="status-row">
-                <span class="status-badge" id="word-status">문제 1 / 25</span>
-                <button class="stop-btn" onclick="finishWord(true)">🛑 중간 채점</button>
+                <span class="status-badge" id="g-status">문제 1 / 50</span>
+                <button class="stop-btn" onclick="finishQuiz(true)">🛑 중간 채점</button>
             </div>
             <div class="evo-box">
-                <div class="evo-emoji" id="wevo-emoji">🥚</div>
-                <div class="evo-name" id="wevo-name">신비한 수리나무 알 (0%)</div>
-                <div class="prog-bg"><div class="prog-bar" id="wevo-bar"></div></div>
+                <div class="evo-emoji" id="gevo-e">🥚</div>
+                <div class="evo-name"  id="gevo-n">신비한 수리나무 알 (0%)</div>
+                <div class="prog-bg"><div class="prog-bar" id="gevo-b"></div></div>
             </div>
-            <div class="word-display" id="word-en">lucky</div>
-            <div class="options-grid" id="word-opts"></div>
+            <div class="unit-label" id="g-unit-label">Unit 03</div>
+            <div class="ko-hint" id="g-ko">한글 힌트</div>
+            <div class="q-box" id="g-qbox">질문</div>
+            <div class="options-grid" id="g-opts"></div>
         </div>
-        <div id="word-result" style="display:none;text-align:center">
-            <div class="result-emoji" id="word-result-emoji">🐉✨</div>
-            <h2 style="color:var(--main)">테스트 종료!</h2>
-            <div class="score-big" id="word-score">100점</div>
-            <div class="score-detail" id="word-detail">정답: 25 / 25</div>
-            <button class="primary-btn" onclick="resetWord()">새로운 알 부화하기 🔄</button>
+
+        <!-- RESULT -->
+        <div id="g-result" style="display:none">
+            <div class="result-wrap">
+                <div class="result-emoji" id="g-res-e">🐉✨</div>
+                <h2 style="color:var(--main);font-size:20px;margin-bottom:4px">훈련 완료!</h2>
+                <div class="score-big" id="g-score">100점</div>
+                <div class="score-detail" id="g-detail">정답: 50 / 50</div>
+                <div class="score-pct" id="g-pct-msg"></div>
+            </div>
+            <div class="breakdown" id="g-breakdown"></div>
+            <div class="wrong-section" id="g-wrong-list" style="display:none">
+                <h3>🔍 틀린 문제 복습</h3>
+                <div id="g-wrong-items"></div>
+            </div>
+            <button class="primary-btn" onclick="resetQuiz()">새로운 알 부화하기 🔄</button>
+            <button class="primary-btn yellow" style="margin-top:8px" onclick="retryWrong()" id="retry-btn">틀린 문제만 다시 풀기 🔁</button>
         </div>
     </div>
 
-    <!-- ===== 2. DICTATION ===== -->
-    <div id="dict-sec" class="section">
-        <div class="evo-box" style="margin-top:0">
-            <div class="evo-emoji" id="devo-emoji">🥚</div>
-            <div class="evo-name" id="devo-name">신비한 수리나무 알 (0%)</div>
-            <div class="prog-bg"><div class="prog-bar" id="devo-bar"></div></div>
-        </div>
-        <div class="setup-row">
-            <strong>문장 이동:</strong>
-            <input type="number" id="jumpNum" value="1" min="1">
-            <button onclick="jumpTo()">GO 🚀</button>
-        </div>
-        <h3 style="color:var(--main);margin:0 0 8px;font-size:15px">뜻을 보고 단어를 터치해 영어 문장을 완성하세요</h3>
-        <div class="status-badge" id="dict-status" style="margin-bottom:10px;display:inline-block">문제 1 / 12</div>
-        <div class="ko-meaning" id="dict-ko">한글 뜻 로딩 중...</div>
-        <div class="drag-tip">💡 단어를 터치해 넣거나, 꾹 눌러서 <b>드래그</b>로 순서를 바꿀 수 있어요!</div>
-        <div id="answer-area"></div>
-        <div id="scramble-area"></div>
-        <div class="audio-row">
-            <button id="speed-btn" class="audio-btn speed-btn" onclick="toggleSpeed()">🐇 보통 속도</button>
-            <button id="play-btn" class="audio-btn play-btn" onclick="toggleAudio()">▶️ 원어민 음성 재생</button>
-        </div>
-    </div>
-
-    <!-- ===== 3. ANALYSIS ===== -->
-    <div id="analysis-sec" class="section">
-        <div id="anal-intro" class="intro-wrap">
-            <div class="intro-icon">🥚</div>
-            <h2>문장 마스터 용 키우기!</h2>
-            <p>핵심 문장을 2단계로 분석해서<br>전설의 용으로 진화시켜 보세요.</p>
-            <button class="primary-btn" onclick="initAudio();startAnalysis()">분석 훈련 시작하기 🚀</button>
-        </div>
-        <div id="anal-quiz" style="display:none">
-            <div class="status-row">
-                <span class="stage-badge stage1" id="anal-stage-badge">1단계: 품사 찾기</span>
-                <button class="stop-btn" onclick="finishAnalysis(true)">🛑 중간 종료</button>
-            </div>
-            <div class="evo-box">
-                <div class="evo-emoji" id="aevo-emoji">🥚</div>
-                <div class="evo-name" id="aevo-name">신비한 수리나무 알 (0%)</div>
-                <div class="prog-bg"><div class="prog-bar" id="aevo-bar"></div></div>
-            </div>
-            <div style="text-align:right;margin-bottom:6px">
-                <span class="status-badge" id="anal-count">1 / 12</span>
-            </div>
-            <div class="analysis-ko" id="anal-ko">로딩 중...</div>
-            <div class="chunks-wrap" id="anal-chunks"></div>
-            <div class="choices-wrap" id="anal-choices"></div>
-            <div class="info-box" id="anal-step1-info">
-                <div class="info-title" style="color:var(--main)">💡 1단계 완료! 더 깊이 들여다볼까요?</div>
-                <div id="anal-step1-desc"></div>
-                <div style="margin-top:12px;font-weight:800;color:var(--red);text-align:center">이제 각 덩어리의 문장 성분(역할)을 맞혀보세요!</div>
-                <button class="primary-btn blue" onclick="startStep2()">2단계: 문장 성분 맞히기 ➔</button>
-            </div>
-            <div id="anal-result-container"></div>
-        </div>
-        <div id="anal-result" style="display:none;text-align:center">
-            <div class="result-emoji">🐉✨</div>
-            <h2 style="color:var(--main)">문장 분석 완료!</h2>
-            <div style="font-size:1.3rem;font-weight:900;color:#3182ce;margin-bottom:20px">수리나무 마스터 달성!</div>
-            <button class="primary-btn" onclick="resetAnalysis()">새로운 알 부화하기 🔄</button>
-        </div>
-    </div>
-
-    <!-- ===== 4. HISTORY ===== -->
-    <div id="hist-sec" class="section">
-        <h3 style="color:var(--main);margin-top:0">🏆 수리나무 명예의 전당</h3>
+    <!-- ===== HISTORY TAB ===== -->
+    <div id="hist-tab" class="section">
+        <h3 style="color:var(--main);margin:0 0 4px">🏆 수리나무 명예의 전당</h3>
+        <p style="font-size:13px;color:#718096;font-weight:600;margin-bottom:4px">Grammar Only 1 성적 기록</p>
         <div id="hist-list"></div>
-    </div>
-
-    <!-- ===== 5. REVIEW ===== -->
-    <div id="review-sec" class="section">
-        <h3 style="color:var(--red);margin-top:0">🚨 나의 약점 단어 도감</h3>
-        <p style="font-size:13px;color:#718096;font-weight:700">틀렸던 단어들을 복습해서 내 것으로 만드세요!</p>
-        <div id="review-list" style="text-align:left;margin-bottom:16px"></div>
-        <button class="primary-btn" style="background:var(--red)" onclick="clearWrong()">도감 전체 비우기 🗑️</button>
     </div>
 </div>
 
 <script>
 // ============================================================
-// DATA — "What a Useful Number!"
+// QUIZ DATA  —  50문제 (Unit 03~08)
+// { unit, ko, q (질문, ___ = 빈칸), opts:[4개], ans }
 // ============================================================
+const allQuestions = [
+    // ── Unit 03: 인칭대명사 ─────────────────────────────────
+    { unit:"Unit 03", ko:"Kate는 여자아이 한 명이에요. 빈칸에 알맞은 인칭대명사는?",
+      q:"Kate is my friend. ___ is kind.", opts:["He","She","It","They"], ans:"She" },
+    { unit:"Unit 03", ko:"a lion(사자 한 마리)을 가리키는 인칭대명사는?",
+      q:"Look at the lion. ___ is big.", opts:["He","She","It","They"], ans:"It" },
+    { unit:"Unit 03", ko:"my father and I(아버지와 나)를 가리키는 인칭대명사는?",
+      q:"My father and I are at home. ___ are happy.", opts:["He","We","They","She"], ans:"We" },
+    { unit:"Unit 03", ko:"two dogs(개 두 마리)를 가리키는 인칭대명사는?",
+      q:"I have two dogs. ___ are cute.", opts:["It","He","We","They"], ans:"They" },
+    { unit:"Unit 03", ko:"Mr. Smith(남성 선생님)를 가리키는 인칭대명사는?",
+      q:"Mr. Smith is my teacher. ___ is strict.", opts:["She","It","He","We"], ans:"He" },
+    { unit:"Unit 03", ko:"'나는 이 가방을 원한다'에서 나를 뜻하는 인칭대명사는?",
+      q:"___ want this bag.", opts:["He","She","I","We"], ans:"I" },
+    { unit:"Unit 03", ko:"Jessica and Kevin을 가리키는 인칭대명사는?",
+      q:"Jessica and Kevin are friends. ___ are funny.", opts:["We","She","He","They"], ans:"They" },
+    { unit:"Unit 03", ko:"'you and I'를 대신하는 인칭대명사는?",
+      q:"You and I are classmates. ___ are good friends.", opts:["They","We","He","It"], ans:"We" },
 
-// 1. WORD LIST (25개)
-const wordList = [
-    { en: "lucky", ko: "운이 좋은, 행운의" },
-    { en: "number", ko: "숫자, 수" },
-    { en: "long ago", ko: "오래 전에" },
-    { en: "pencil", ko: "연필" },
-    { en: "paper", ko: "종이" },
-    { en: "easily", ko: "쉽게" },
-    { en: "thumb", ko: "엄지손가락" },
-    { en: "finger", ko: "손가락" },
-    { en: "bend", ko: "구부리다" },
-    { en: "part", ko: "부분" },
-    { en: "count", ko: "세다, 계산하다" },
-    { en: "point to", ko: "~을 가리키다" },
-    { en: "nowadays", ko: "요즘에는" },
-    { en: "different", ko: "다양한, 다른" },
-    { en: "calendar", ko: "달력" },
-    { en: "month", ko: "달, 월" },
-    { en: "clock", ko: "시계" },
-    { en: "hour", ko: "시간" },
-    { en: "store", ko: "가게, 상점" },
-    { en: "sell", ko: "팔다" },
-    { en: "group", ko: "무리, 그룹" },
-    { en: "dozen", ko: "12개, 한 다스" },
-    { en: "doughnut", ko: "도넛" },
-    { en: "certainly", ko: "분명히, 확실히" },
-    { en: "useful", ko: "유용한" }
+    // ── Unit 04: 지시대명사 ─────────────────────────────────
+    { unit:"Unit 04", ko:"가까이 있는 사물 하나를 가리킬 때 쓰는 지시대명사는?",
+      q:"___ is my pencil. (가까이, 하나)", opts:["That","These","This","Those"], ans:"This" },
+    { unit:"Unit 04", ko:"멀리 있는 사물 하나를 가리킬 때 쓰는 지시대명사는?",
+      q:"___ is a book. (멀리, 하나)", opts:["This","These","Those","That"], ans:"That" },
+    { unit:"Unit 04", ko:"가까이 있는 사물 여러 개를 가리킬 때는?",
+      q:"___ are my pencils. (가까이, 여러 개)", opts:["That","This","Those","These"], ans:"These" },
+    { unit:"Unit 04", ko:"멀리 있는 사물 여러 개를 가리킬 때는?",
+      q:"___ are your books. (멀리, 여러 개)", opts:["These","This","That","Those"], ans:"Those" },
+    { unit:"Unit 04", ko:"오늘은 월요일이다. 날짜/날씨를 나타낼 때 쓰는 것은?",
+      q:"___ is Monday today.", opts:["This","That","It","These"], ans:"It" },
+    { unit:"Unit 04", ko:"저분들은 우리 학교 선생님들이다. 멀리 있는 여러 명은?",
+      q:"___ are my school teachers.", opts:["This","Those","These","That"], ans:"Those" },
+    { unit:"Unit 04", ko:"이것들은 매우 흥미로운 책이다. 가까이 있는 여러 개는?",
+      q:"___ are very interesting books.", opts:["Those","This","That","These"], ans:"These" },
+    { unit:"Unit 04", ko:"저 사진은 아주 멋지다. 멀리 있는 하나는?",
+      q:"___ picture is wonderful.", opts:["This","These","Those","That"], ans:"That" },
+
+    // ── Unit 05: be동사 현재형 (am / is / are) ──────────────
+    { unit:"Unit 05", ko:"'나는 행복하다'에서 빈칸에 알맞은 be동사는?",
+      q:"I ___ happy.", opts:["is","are","am","be"], ans:"am" },
+    { unit:"Unit 05", ko:"'그들은 치과의사들이다'에서 빈칸에 알맞은 be동사는?",
+      q:"We ___ dentists.", opts:["am","is","be","are"], ans:"are" },
+    { unit:"Unit 05", ko:"'그녀는 오늘 바쁘다'에서 빈칸에 알맞은 be동사는?",
+      q:"She ___ busy today.", opts:["are","am","be","is"], ans:"is" },
+    { unit:"Unit 05", ko:"'그것은 연필이다'에서 빈칸에 알맞은 be동사는?",
+      q:"It ___ a pencil.", opts:["am","are","be","is"], ans:"is" },
+    { unit:"Unit 05", ko:"'You are a nurse'의 축약형은?",
+      q:"You are a nurse. → ___ a nurse.", opts:["You're","You is","You am","Yours"], ans:"You're" },
+    { unit:"Unit 05", ko:"'It is a soccer ball'의 축약형은?",
+      q:"It is a soccer ball. → ___ a soccer ball.", opts:["Its","It're","It's","Itis"], ans:"It's" },
+    { unit:"Unit 05", ko:"'We are in the theater'의 축약형은?",
+      q:"We are in the theater. → ___ in the theater.", opts:["We is","We're","Wes","We am"], ans:"We're" },
+    { unit:"Unit 05", ko:"'David and I'에 알맞은 be동사는?",
+      q:"David and I ___ in the library.", opts:["am","is","be","are"], ans:"are" },
+
+    // ── Unit 06: be동사 부정문 / 의문문 ─────────────────────
+    { unit:"Unit 06", ko:"'She is not a singer'의 줄임말(isn't 사용)은?",
+      q:"She is not a singer. → She ___ a singer.", opts:["isn't","not is","is'nt","amn't"], ans:"isn't" },
+    { unit:"Unit 06", ko:"'I am not'의 올바른 축약형은?",
+      q:"I'm not angry. → 이 문장에서 I'm not은 ___ 의 줄임말.",
+      opts:["I amn't","I are not","I am not","I isn't"], ans:"I am not" },
+    { unit:"Unit 06", ko:"'They are not from Korea'의 줄임말은?",
+      q:"They ___ from Korea.", opts:["aren't","isn't","amn't","not are"], ans:"aren't" },
+    { unit:"Unit 06", ko:"be동사 의문문: 'You are busy'를 의문문으로 바꾸면?",
+      q:"You are busy. → ___ you busy?", opts:["Am","Is","Are","Be"], ans:"Are" },
+    { unit:"Unit 06", ko:"be동사 의문문: 'He is a great pianist'를 의문문으로 바꾸면?",
+      q:"He is a great pianist. → ___ he a great pianist?", opts:["Are","Am","Be","Is"], ans:"Is" },
+    { unit:"Unit 06", ko:"'Are you actors? — Yes, ___.'에 알맞은 대답은?",
+      q:"Are you actors? — Yes, ___.", opts:["I am","we are","they are","you are"], ans:"we are" },
+    { unit:"Unit 06", ko:"'Is this movie very funny?'에 알맞은 부정 대답은?",
+      q:"Is this movie very funny? — No, ___ very funny.",
+      opts:["it isn't","they aren't","it aren't","this isn't"], ans:"it isn't" },
+    { unit:"Unit 06", ko:"'They are at home'을 의문문으로 바꾸면?",
+      q:"They are at home. → ___ they at home?", opts:["Is","Am","Be","Are"], ans:"Are" },
+
+    // ── Unit 07: be동사 과거형 (was / were) ─────────────────
+    { unit:"Unit 07", ko:"'그는 신났다'의 과거형에 알맞은 be동사는?",
+      q:"He ___ excited. (과거)", opts:["is","are","were","was"], ans:"was" },
+    { unit:"Unit 07", ko:"'나는 집에 없었다'의 과거 부정형은?",
+      q:"I ___ at home. (과거 부정)", opts:["wasn't","weren't","isn't","aren't"], ans:"wasn't" },
+    { unit:"Unit 07", ko:"'그들은 도서관에서 기뻤다'의 과거형은?",
+      q:"We ___ glad to meet you. (과거)", opts:["was","is","am","were"], ans:"were" },
+    { unit:"Unit 07", ko:"'The cats were on the sofa'의 과거 부정은?",
+      q:"The cats ___ on the sofa. (과거 부정)", opts:["wasn't","isn't","weren't","aren't"], ans:"weren't" },
+    { unit:"Unit 07", ko:"'She was a writer'를 의문문으로 바꾸면?",
+      q:"She was a writer. → ___ she a writer?", opts:["Is","Were","Be","Was"], ans:"Was" },
+    { unit:"Unit 07", ko:"'His cats were on the bed'를 의문문으로 바꾸면?",
+      q:"His cats were on the bed. → ___ his cats on the bed?",
+      opts:["Was","Is","Are","Were"], ans:"Were" },
+    { unit:"Unit 07", ko:"'Billy wasn't at home'의 의미로 맞는 것은?",
+      q:"Billy wasn't at home. 이 문장의 의미는?",
+      opts:["빌리는 집에 있었다","빌리는 집에 없었다","빌리는 집에 있니?","빌리는 집에 있을 것이다"], ans:"빌리는 집에 없었다" },
+    { unit:"Unit 07", ko:"'He was at the beach'를 의문문으로 바꾸면?",
+      q:"He was at the beach. → ___ he at the beach?",
+      opts:["Is","Were","Are","Was"], ans:"Was" },
+
+    // ── Unit 08: There is / are ──────────────────────────────
+    { unit:"Unit 08", ko:"상자 안에 장난감 자동차가 하나 있다. 빈칸에 알맞은 것은?",
+      q:"___ a toy car in the box.", opts:["There are","There is","There was","There were"], ans:"There is" },
+    { unit:"Unit 08", ko:"수영장에 사람들이 있다. (복수) 빈칸에 알맞은 것은?",
+      q:"___ people in the pool.", opts:["There is","There was","There were","There are"], ans:"There are" },
+    { unit:"Unit 08", ko:"병 안에 물이 없다. (부정) 빈칸에 알맞은 것은?",
+      q:"___ water in the bottle.", opts:["There isn't","There aren't","There wasn't","There weren't"], ans:"There isn't" },
+    { unit:"Unit 08", ko:"바구니에 오렌지가 없다. (복수 부정) 빈칸에 알맞은 것은?",
+      q:"___ oranges in the basket.", opts:["There isn't","There aren't","There wasn't","There weren't"], ans:"There aren't" },
+    { unit:"Unit 08", ko:"어젯밤에 파티가 없었다. (과거 부정) 빈칸에 알맞은 것은?",
+      q:"___ a party last night.", opts:["There isn't","There weren't","There wasn't","There aren't"], ans:"There wasn't" },
+    { unit:"Unit 08", ko:"꽃병에 꽃들이 있었니? (과거 복수 의문) 빈칸에 알맞은 것은?",
+      q:"___ flowers in the vase?", opts:["Is there","Are there","Was there","Were there"], ans:"Were there" },
+    { unit:"Unit 08", ko:"가방에 책이 있었니? (과거 단수 의문) 빈칸에 알맞은 것은?",
+      q:"___ a book in your bag?", opts:["Were there","Is there","Are there","Was there"], ans:"Was there" },
+    { unit:"Unit 08", ko:"거실에 피아노가 한 대 있다. 빈칸에 알맞은 것은?",
+      q:"___ a piano in the living room.", opts:["There are","There were","There was","There is"], ans:"There is" },
+    { unit:"Unit 08", ko:"침대 위에 테디 베어들이 있었다. (과거 복수) 빈칸에 알맞은 것은?",
+      q:"___ teddy bears on the bed.", opts:["There are","There is","There were","There was"], ans:"There were" },
+    { unit:"Unit 08", ko:"지난 겨울에는 눈이 많이 왔다. 빈칸에 알맞은 것은?",
+      q:"___ a lot of snow last winter.", opts:["There are","There is","There were","There was"], ans:"There was" },
 ];
 
-// 2. DICTATION SENTENCES (12개)
-const sentenceList = [
-    { en: "Many people pick 7 as a lucky number.", ko: "많은 사람들이 7을 행운의 숫자로 고른다." },
-    { en: "Long ago, people didn't have pencils and paper.", ko: "오래 전에, 사람들은 연필과 종이가 없었다." },
-    { en: "They couldn't easily write numbers.", ko: "그들은 숫자를 쉽게 쓸 수 없었다." },
-    { en: "People have one thumb and four fingers on each hand.", ko: "사람들은 각 손에 엄지손가락 하나와 손가락 네 개가 있다." },
-    { en: "The four fingers can bend into three parts.", ko: "네 손가락은 세 부분으로 구부러질 수 있다." },
-    { en: "When they needed to count, they used their thumbs to point to the 12 parts.", ko: "그들이 셀 필요가 있었을 때, 그들은 12개의 부분을 가리키기 위해 엄지를 사용했다." },
-    { en: "Nowadays, people use 12 to count many different things.", ko: "요즘에는, 사람들이 많은 다양한 것들을 세기 위해 12를 사용한다." },
-    { en: "A calendar has 12 months and a clock has 12 hours.", ko: "달력에는 12개월이 있고 시계에는 12시간이 있다." },
-    { en: "At the store, some things are sold in groups of 12.", ko: "가게에서, 어떤 것들은 12개 묶음으로 판매된다." },
-    { en: "This is called a dozen.", ko: "이것을 한 다스라고 부른다." },
-    { en: "The number 12 might not be lucky.", ko: "숫자 12는 행운이 아닐 수도 있다." },
-    { en: "But it is certainly useful.", ko: "하지만 그것은 분명히 유용하다." }
-];
-
 // ============================================================
-// 3. ANALYSIS DATA (12문장)
-// pos 5종류만: "명사(구/절)" | "대명사" | "형용사(구/절)" | "부사(구/절)" | "동사(구)"
-// note(4번째): 실제 구조(전치사구/to부정사/동명사/접속사절 등) 상세 해설
-// ============================================================
-const analysisList = [
-    [
-        "많은 사람들이 7을 행운의 숫자로 고른다.",
-        [
-            ["Many people",       "명사(구/절)",  "주어"],
-            ["pick",              "동사(구)",     "서술어"],
-            ["7",                 "명사(구/절)",  "목적어"],
-            ["as a lucky number", "부사(구/절)",  "수식어",
-             "✦ 전치사 as가 이끄는 전치사구 (부사구)\n동사 pick을 수식하며 '~로서'의 의미입니다."]
-        ]
-    ],
-    [
-        "오래 전에, 사람들은 연필과 종이가 없었다.",
-        [
-            ["Long ago",            "부사(구/절)", "수식어"],
-            ["people",              "명사(구/절)", "주어"],
-            ["didn't have",         "동사(구)",    "서술어"],
-            ["pencils and paper",   "명사(구/절)", "목적어"]
-        ]
-    ],
-    [
-        "그들은 숫자를 쉽게 쓸 수 없었다.",
-        [
-            ["They",           "대명사",      "주어"],
-            ["couldn't write", "동사(구)",    "서술어"],
-            ["numbers",        "명사(구/절)", "목적어"],
-            ["easily",         "부사(구/절)", "수식어"]
-        ]
-    ],
-    [
-        "네 손가락은 세 부분으로 구부러질 수 있다.",
-        [
-            ["The four fingers", "명사(구/절)", "주어"],
-            ["can bend",         "동사(구)",    "서술어"],
-            ["into three parts", "부사(구/절)", "수식어",
-             "✦ 전치사 into가 이끄는 전치사구 (부사구)\n동사 bend를 수식합니다."]
-        ]
-    ],
-    [
-        "그들이 셀 필요가 있었을 때, 그들은 엄지를 사용했다.",
-        [
-            ["When they needed to count", "부사(구/절)", "수식어",
-             "✦ 접속사 when이 이끄는 부사절 (시간)\n주절 전체를 수식합니다.\n※ 절 안의 needed to count: to부정사구(명사구)가 need의 목적어 역할 — 명사적 용법"],
-            ["they",         "대명사",      "주어"],
-            ["used",         "동사(구)",    "서술어"],
-            ["their thumbs", "명사(구/절)", "목적어"]
-        ]
-    ],
-    [
-        "그들은 12개의 부분을 가리키기 위해 엄지를 사용했다.",
-        [
-            ["they",         "대명사",      "주어"],
-            ["used",         "동사(구)",    "서술어"],
-            ["their thumbs", "명사(구/절)", "목적어"],
-            ["to point to the 12 parts", "부사(구/절)", "수식어",
-             "✦ to부정사구 (부사구 — 부사적 용법, 목적)\n'~를 가리키기 위해'의 의미로 동사 used를 수식합니다."]
-        ]
-    ],
-    [
-        "요즘에는, 사람들이 많은 다양한 것들을 세기 위해 12를 사용한다.",
-        [
-            ["Nowadays",    "부사(구/절)", "수식어"],
-            ["people",      "명사(구/절)", "주어"],
-            ["use",         "동사(구)",    "서술어"],
-            ["12",          "명사(구/절)", "목적어"],
-            ["to count many different things", "부사(구/절)", "수식어",
-             "✦ to부정사구 (부사구 — 부사적 용법, 목적)\n'~을 세기 위해'의 의미로 동사 use를 수식합니다."]
-        ]
-    ],
-    [
-        "달력에는 12개월이 있고 시계에는 12시간이 있다.",
-        [
-            ["A calendar",   "명사(구/절)", "주어"],
-            ["has",          "동사(구)",    "서술어"],
-            ["12 months",    "명사(구/절)", "목적어"],
-            ["and a clock has 12 hours", "부사(구/절)", "수식어",
-             "✦ 등위접속사 and가 이끄는 등위절\n앞 절과 대등하게 연결됩니다."]
-        ]
-    ],
-    [
-        "가게에서, 어떤 것들은 12개 묶음으로 판매된다.",
-        [
-            ["At the store",    "부사(구/절)", "수식어",
-             "✦ 전치사 at이 이끄는 전치사구 (부사구)\n문장 전체를 수식합니다."],
-            ["some things",     "명사(구/절)", "주어"],
-            ["are sold",        "동사(구)",    "서술어"],
-            ["in groups of 12", "부사(구/절)", "수식어",
-             "✦ 전치사 in이 이끄는 전치사구 (부사구)\n동사 are sold를 수식합니다."]
-        ]
-    ],
-    [
-        "이것을 한 다스라고 부른다.",
-        [
-            ["This",     "대명사",      "주어"],
-            ["is called","동사(구)",    "서술어"],
-            ["a dozen",  "명사(구/절)", "보어"]
-        ]
-    ],
-    [
-        "숫자 12는 행운이 아닐 수도 있다.",
-        [
-            ["The number 12", "명사(구/절)",   "주어"],
-            ["might not be",  "동사(구)",      "서술어"],
-            ["lucky",         "형용사(구/절)", "보어"]
-        ]
-    ],
-    [
-        "하지만 그것은 분명히 유용하다.",
-        [
-            ["But",             "부사(구/절)",  "수식어"],
-            ["it",              "대명사",       "주어"],
-            ["is",              "동사(구)",     "서술어"],
-            ["certainly useful","형용사(구/절)","보어"]
-        ]
-    ]
-];
-
-// 1단계 품사 선택지: 5종류 고정
-const posList  = ["명사(구/절)", "대명사", "형용사(구/절)", "부사(구/절)", "동사(구)"];
-const roleList = ["주어", "서술어", "목적어", "보어", "수식어"];
-
-// ============================================================
-// UTILS
+// HELPERS
 // ============================================================
 let audioCtx = null, comboCount = 0;
-
 function initAudio() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
 }
-function playTone(f, t, d, v=0.08) {
-    if (!audioCtx) return;
-    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-    o.type = t; o.frequency.setValueAtTime(f, audioCtx.currentTime);
-    g.gain.setValueAtTime(v, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
-    o.connect(g); g.connect(audioCtx.destination);
-    o.start(); o.stop(audioCtx.currentTime + d);
+function tone(f,t,d,v=0.07) {
+    if(!audioCtx) return;
+    const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.type=t; o.frequency.setValueAtTime(f,audioCtx.currentTime);
+    g.gain.setValueAtTime(v,audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+d);
+    o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+d);
 }
-function sfxOK()  { playTone(600,'sine',.1); setTimeout(()=>playTone(800,'sine',.15),100); }
-function sfxNG()  { playTone(280,'sawtooth',.2,.12); }
-function sfxEvo() { [400,500,650].forEach((f,i)=>setTimeout(()=>playTone(f,'square',.2,.06),i*150)); }
-function fireConfetti() { sfxEvo(); confetti({ particleCount:140, spread:75, origin:{y:.6}, colors:['#1a5c9a','#f5a623','#27ae60','#e74c3c'] }); }
+function sfxOK()  { tone(600,'sine',.1); setTimeout(()=>tone(850,'sine',.15),100); }
+function sfxNG()  { tone(260,'sawtooth',.22,.12); }
+function sfxEvo() { [380,500,660].forEach((f,i)=>setTimeout(()=>tone(f,'square',.2,.06),i*150)); }
+function boom()   { sfxEvo(); confetti({particleCount:150,spread:80,origin:{y:.6},colors:['#6c3fa0','#f0b429','#22c55e','#ef4444']}); }
 
-function shuffle(arr) {
-    let a=[...arr];
-    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-    return a;
+function shuffle(a) {
+    let arr=[...a];
+    for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+    return arr;
 }
 function todayKey() { const t=new Date(); return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`; }
-function fmtKey(k) { return k.replace(/-/g,'. '); }
+function fmtDate(d) { return d.replace(/-/g,'. '); }
 
-function showCombo(isOK) {
-    if(isOK) { comboCount++; if(comboCount<2) return; }
-    else { comboCount=0; return; }
+function showCombo(ok) {
+    if(ok) comboCount++; else { comboCount=0; return; }
+    if(comboCount < 2) return;
     const el=document.getElementById('combo');
-    el.innerText=`${comboCount} COMBO! 🔥`;
+    el.innerText=`${comboCount} COMBO! ✨`;
     el.classList.remove('combo-pop'); void el.offsetWidth; el.classList.add('combo-pop');
 }
 
-function updateEvo(prefix, cur, tot) {
+function updateEvo(cur, tot) {
     const r = tot===0 ? 0 : cur/tot;
-    const stages=[
-        [0,'🥚','신비한 수리나무 알'],
-        [.001,'🐣','부화하는 아기 용'],
-        [.25,'🦎','꼬마 드래곤'],
-        [.5,'🦖','성장하는 파워 용'],
-        [.75,'🐲','비상하는 매직 용'],
-        [1,'🐉✨','수리나무 마스터 용!!']
-    ];
-    let st = stages[0];
-    for(let s of stages) { if(r>=s[0]) st=s; }
-    const pct = Math.floor(r*100);
-    const em=document.getElementById(prefix+'emoji');
+    const s=[[0,'🥚','신비한 수리나무 알'],[.001,'🐣','부화하는 아기 용'],[.25,'🦎','꼬마 드래곤'],[.5,'🦖','파워 용'],[.75,'🐲','비상하는 매직 용'],[1,'🐉✨','수리나무 마스터 용!!']];
+    let st=s[0]; for(const x of s) if(r>=x[0]) st=x;
+    const pct=Math.floor(r*100);
+    const em=document.getElementById('gevo-e');
     em.innerText=st[1]; em.style.transform='scale(1.3)';
     setTimeout(()=>em.style.transform='scale(1)',300);
-    document.getElementById(prefix+'name').innerText=`${st[2]} (${pct}%)`;
-    document.getElementById(prefix+'bar').style.width=pct+'%';
+    document.getElementById('gevo-n').innerText=`${st[2]} (${pct}%)`;
+    document.getElementById('gevo-b').style.width=pct+'%';
 }
 
-function showSection(id, btn) {
-    stopLoop();
-    comboCount=0;
+function showTab(id, btn) {
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     btn.classList.add('active');
-    if(id==='dict-sec'){
-        initAudio();
-        if(!dictLoaded){ loadDict(); dictLoaded=true; }
-        else { isLoop=true; loopPlay(); }
-        updatePlayBtn();
-    }
-}
-
-function saveHistory(key, data) {
-    data.date = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\. /g,'.').replace('.','. ');
-    let arr = JSON.parse(localStorage.getItem('suri_'+key) || '[]');
-    arr.unshift(data); if(arr.length>10) arr=arr.slice(0,10);
-    localStorage.setItem('suri_'+key, JSON.stringify(arr));
-}
-function saveWrong(w) {
-    let arr = JSON.parse(localStorage.getItem('suri_wrong') || '[]');
-    if(!arr.find(x=>x.en===w.en)) { arr.push(w); localStorage.setItem('suri_wrong',JSON.stringify(arr)); }
 }
 
 // ============================================================
-// 1. WORD TEST
+// QUIZ LOGIC
 // ============================================================
-let wList=[], wIdx=0, wOK=0, wAnswering=false;
+let qList=[], qIdx=0, qOK=0, qBusy=false;
+let unitStats={};   // { "Unit 03": {ok:0,total:0}, ... }
+let wrongList=[];   // 틀린 문제 배열
+let isRetryMode=false;
 
-function startWordTest() {
-    wList=shuffle(wordList); wIdx=0; wOK=0; comboCount=0;
-    document.getElementById('word-intro').style.display='none';
-    document.getElementById('word-result').style.display='none';
-    document.getElementById('word-quiz').style.display='block';
-    loadWord();
+function startQuiz(retryList=null) {
+    isRetryMode = !!retryList;
+    qList = retryList ? shuffle(retryList) : shuffle([...allQuestions]);
+    qIdx=0; qOK=0; comboCount=0; wrongList=[];
+    unitStats={};
+    qList.forEach(q=>{ if(!unitStats[q.unit]) unitStats[q.unit]={ok:0,total:0}; unitStats[q.unit].total++; });
+
+    document.getElementById('g-intro').style.display='none';
+    document.getElementById('g-result').style.display='none';
+    document.getElementById('g-quiz').style.display='block';
+    loadQ();
 }
-function loadWord() {
-    wAnswering=false;
-    updateEvo('wevo-', wIdx, wList.length);
-    const q=wList[wIdx];
-    document.getElementById('word-status').innerText=`문제 ${wIdx+1} / ${wList.length}`;
-    document.getElementById('word-en').innerText=q.en;
-    window.speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(q.en); u.lang='en-US'; u.rate=1.0;
-    window.speechSynthesis.speak(u);
-    const opts=shuffle([{t:q.ko,ok:true},...shuffle(wordList.filter(w=>w.ko!==q.ko)).slice(0,3).map(w=>({t:w.ko,ok:false}))]);
-    const div=document.getElementById('word-opts'); div.innerHTML='';
+
+function loadQ() {
+    qBusy=false;
+    updateEvo(qIdx, qList.length);
+    const q=qList[qIdx];
+    document.getElementById('g-status').innerText=`문제 ${qIdx+1} / ${qList.length}`;
+    document.getElementById('g-unit-label').innerText=q.unit;
+    document.getElementById('g-ko').innerText=q.ko;
+
+    // render question with blank
+    const qBox=document.getElementById('g-qbox');
+    qBox.innerHTML = q.q.replace('___', `<span class="blank" id="q-blank">___</span>`);
+
+    // render options (shuffled)
+    const opts=shuffle([...q.opts]);
+    const grid=document.getElementById('g-opts'); grid.innerHTML='';
     opts.forEach((o,i)=>{
         const b=document.createElement('button'); b.className='opt-btn';
-        b.innerText=`${i+1}. ${o.t}`;
-        b.onclick=()=>handleWord(b,o.ok,div,q);
-        div.appendChild(b);
-    });
-}
-function handleWord(btn, ok, div, q) {
-    if(wAnswering) return; wAnswering=true;
-    showCombo(ok);
-    if(ok) { sfxOK(); btn.classList.add('correct'); wOK++; }
-    else { sfxNG(); btn.classList.add('wrong'); saveWrong(q);
-        for(let b of div.querySelectorAll('.opt-btn')) { if(b.innerText.includes(q.ko)){b.classList.add('correct');break;} }
-    }
-    setTimeout(()=>{ wIdx++; if(wIdx<wList.length) loadWord(); else finishWord(); }, 800);
-}
-function finishWord(early=false) {
-    const tot = early ? wIdx : wList.length;
-    if(tot===0){resetWord();return;}
-    const sc=Math.round(wOK/tot*100);
-    updateEvo('wevo-',wIdx,wList.length);
-    setTimeout(()=>{
-        document.getElementById('word-quiz').style.display='none';
-        document.getElementById('word-result').style.display='block';
-        const em=document.getElementById('word-result-emoji');
-        em.innerText = sc>=90?'🐉✨':sc>=70?'🐲':'🦖💦';
-        const sd=document.getElementById('word-score');
-        sd.innerText=sc+'점'; sd.style.color=sc>=90?'#1a5c9a':sc>=70?'#f5a623':'#e74c3c';
-        document.getElementById('word-detail').innerText=`정답: ${wOK}개 / ${tot}문항`;
-        saveHistory('word',{score:sc,correct:wOK,total:tot});
-        if(!early && sc>=90) fireConfetti();
-    },500);
-}
-function resetWord() { document.getElementById('word-result').style.display='none'; document.getElementById('word-intro').style.display='block'; }
-
-// ============================================================
-// 2. DICTATION
-// ============================================================
-let dIdx=0, isLoop=false, loopTimer=null, dictLoaded=false;
-const speeds=[1.0,0.75,0.55], speedLabels=['🐇 보통 속도','🐢 느리게','🐌 아주 느리게'];
-let spIdx=0;
-
-function loopPlay() {
-    if(!isLoop||sentenceList.length===0) return;
-    window.speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(sentenceList[dIdx].en);
-    u.lang='en-US'; u.rate=speeds[spIdx];
-    u.onend=()=>{ if(isLoop) loopTimer=setTimeout(loopPlay,1000); };
-    window.speechSynthesis.speak(u);
-}
-function stopLoop() { isLoop=false; window.speechSynthesis.cancel(); clearTimeout(loopTimer); }
-function toggleAudio() { if(isLoop) stopLoop(); else {isLoop=true;loopPlay();} updatePlayBtn(); }
-function updatePlayBtn() {
-    const b=document.getElementById('play-btn'); if(!b) return;
-    b.innerHTML=isLoop?'⏸️ 음성 반복 멈춤':'▶️ 원어민 음성 재생';
-    b.className='audio-btn play-btn'+(isLoop?' playing':'');
-}
-function toggleSpeed() {
-    spIdx=(spIdx+1)%speeds.length;
-    document.getElementById('speed-btn').innerHTML=speedLabels[spIdx];
-    if(isLoop){stopLoop();isLoop=true;loopPlay();}
-}
-
-function loadDict() {
-    if(!sentenceList.length) return;
-    stopLoop(); updateEvo('devo-',dIdx,sentenceList.length);
-    const s=sentenceList[dIdx];
-    document.getElementById('dict-status').innerText=`영작 문제 ${dIdx+1} / ${sentenceList.length}`;
-    document.getElementById('dict-ko').innerText=s.ko;
-    const aa=document.getElementById('answer-area'); aa.innerHTML=''; aa.style.background='var(--light)'; aa.style.borderColor='var(--main)';
-    const sa=document.getElementById('scramble-area'); sa.innerHTML='';
-    shuffle(s.en.split(' ').filter(w=>w)).forEach(w=>{
-        const b=document.createElement('button'); b.className='word-chip'; b.innerText=w;
-        b.onclick=function(){
-            if(this.parentElement.id==='scramble-area') aa.appendChild(this);
-            else sa.appendChild(this);
-            if(sa.children.length===0) checkDict();
-        };
-        sa.appendChild(b);
-    });
-    if(!window._dictSortable) {
-        window._dictSortable=new Sortable(aa,{
-            animation:280, ghostClass:'sortable-ghost', dragClass:'sortable-drag', swapThreshold:.65,
-            onEnd:()=>{ if(document.getElementById('scramble-area').children.length===0) checkDict(); }
-        });
-    }
-    isLoop=true; loopPlay(); updatePlayBtn();
-}
-function checkDict() {
-    const aa=document.getElementById('answer-area');
-    const student=Array.from(aa.children).map(b=>b.innerText.trim()).join(' ');
-    const norm=s=>s.toLowerCase().replace(/[^a-z0-9]/g,'');
-    if(norm(student)===norm(sentenceList[dIdx].en)){
-        sfxOK(); showCombo(true);
-        aa.style.background='#d4edda'; aa.style.borderColor='var(--green)';
-        recordDict(); stopLoop(); updatePlayBtn();
-        setTimeout(()=>nextDict(),700);
-    } else {
-        sfxNG(); showCombo(false);
-        aa.style.background='#fde8e8';
-        setTimeout(()=>aa.style.background='var(--light)',400);
-    }
-}
-function nextDict() {
-    if(dIdx+1<sentenceList.length){dIdx++;loadDict();}
-    else{
-        stopLoop(); updatePlayBtn();
-        updateEvo('devo-',sentenceList.length,sentenceList.length);
-        fireConfetti();
-        setTimeout(()=>alert('수리나무 마스터 달성! 영작 훈련 완료! 🐉🎉'),300);
-    }
-}
-function jumpTo() {
-    const n=parseInt(document.getElementById('jumpNum').value);
-    if(n>=1&&n<=sentenceList.length){dIdx=n-1;comboCount=0;loadDict();}
-    else alert(`1~${sentenceList.length} 사이 번호를 입력하세요.`);
-}
-function recordDict() {
-    const dk=todayKey();
-    let h=JSON.parse(localStorage.getItem('suri_dict_hist')||'{}');
-    if(!h[dk]) h[dk]={count:0}; h[dk].count++;
-    localStorage.setItem('suri_dict_hist',JSON.stringify(h));
-}
-
-// ============================================================
-// 3. ANALYSIS (2-stage)
-// ============================================================
-let aIdx=0, aStage=1, aActive=0, aAnswers=[];
-
-function startAnalysis() {
-    aIdx=0; aStage=1; comboCount=0;
-    document.getElementById('anal-intro').style.display='none';
-    document.getElementById('anal-result').style.display='none';
-    document.getElementById('anal-quiz').style.display='block';
-    loadAnalysis();
-}
-function loadAnalysis() {
-    updateEvo('aevo-',aIdx,analysisList.length);
-    aStage=1; aActive=0;
-    const d=analysisList[aIdx];
-    aAnswers=new Array(d[1].length).fill(null);
-    document.getElementById('anal-count').innerText=`${aIdx+1} / ${analysisList.length}`;
-    document.getElementById('anal-ko').innerText=d[0];
-    document.getElementById('anal-result-container').innerHTML='';
-    document.getElementById('anal-step1-info').classList.remove('show');
-    document.getElementById('anal-choices').style.display='flex';
-    const sb=document.getElementById('anal-stage-badge');
-    sb.innerText='1단계: 품사(구/절) 찾기'; sb.className='stage-badge stage1';
-    buildChunks(); buildChoices();
-}
-function buildChunks() {
-    const d=analysisList[aIdx];
-    const wrap=document.getElementById('anal-chunks'); wrap.innerHTML='';
-    d[1].forEach((c,i)=>{
-        const div=document.createElement('div');
-        div.className='chunk-card'+(i===aActive?' active':'');
-        div.innerHTML=`<div class="chunk-en">${c[0]}</div><div class="chunk-ans" id="ca-${i}">?</div>`;
-        div.onclick=()=>{aActive=i;renderActiveChunk();};
-        wrap.appendChild(div);
-    });
-}
-function renderActiveChunk() {
-    document.querySelectorAll('.chunk-card').forEach((c,i)=>{
-        c.classList.toggle('active', i===aActive && !c.classList.contains('done') && !c.classList.contains('done-2'));
-    });
-}
-function buildChoices() {
-    const grid=document.getElementById('anal-choices'); grid.innerHTML='';
-    const list=aStage===1 ? posList : roleList;
-    // For stage 1, only show relevant subset to avoid overwhelming
-    let showList = aStage===1 ? getRelevantPos() : roleList;
-    showList.forEach(item=>{
-        const b=document.createElement('button'); b.className='choice-btn';
-        b.innerText=item; b.onclick=()=>pickChoice(item);
+        b.innerHTML=`<span style="color:var(--main);margin-right:6px">${['①','②','③','④'][i]}</span>${o}`;
+        b.onclick=()=>handleQ(b, o, q);
         grid.appendChild(b);
     });
 }
 
-function getRelevantPos() {
-    return posList; // 항상 5개 고정
-}
+function handleQ(btn, chosen, q) {
+    if(qBusy) return; qBusy=true;
+    const isOK = chosen===q.ans;
+    showCombo(isOK);
+    const blank=document.getElementById('q-blank');
+    if(blank) { blank.innerText=chosen; blank.classList.add(isOK?'correct':'wrong'); }
 
-function pickChoice(val) {
-    const d=analysisList[aIdx];
-    const chunk=d[1][aActive];
-    const correct = aStage===1 ? chunk[1] : chunk[2];
-    const card=document.querySelectorAll('.chunk-card')[aActive];
-
-    if(val===correct){
-        sfxOK(); showCombo(true);
-        aAnswers[aActive]=val;
-        const ansEl=document.getElementById('ca-'+aActive);
-        ansEl.innerText=val;
-        ansEl.style.color = aStage===1 ? 'var(--green)' : 'var(--main)';
-        card.classList.remove('active');
-        card.classList.add(aStage===1?'done':'done-2');
-
-        const nextNull=aAnswers.indexOf(null);
-        if(nextNull!==-1){
-            aActive=nextNull; renderActiveChunk();
-        } else {
-            if(aStage===1){
-                sfxEvo();
-                let html='';
-                d[1].forEach(c=>{
-                    if(c[3]) {
-                        const noteHtml = c[3].replace(/\n/g,'<br>');
-                        html+=`<div class="detail-row"><b>${c[0]}</b><br>${noteHtml}</div>`;
-                    }
-                });
-                if(!html) html='<div class="detail-row">✅ 기본 단어들로 깔끔하게 이루어진 문장이에요!</div>';
-                document.getElementById('anal-step1-desc').innerHTML=html;
-                document.getElementById('anal-choices').style.display='none';
-                document.getElementById('anal-step1-info').classList.add('show');
-            } else {
-                sfxEvo();
-                // Determine sentence pattern
-                const roles=d[1].map(c=>c[2]);
-                let pattern;
-                if(roles.includes('목적어')&&roles.filter(r=>r==='보어').length>0) pattern='5형식 (S+V+O+O.C)';
-                else if(roles.filter(r=>r==='목적어').length>=2) pattern='4형식 (S+V+I.O+D.O)';
-                else if(roles.includes('목적어')) pattern='3형식 (S+V+O)';
-                else if(roles.includes('보어')) pattern='2형식 (S+V+S.C)';
-                else pattern='1형식 (S+V+[M])';
-
-                document.getElementById('anal-choices').style.display='none';
-                document.getElementById('anal-result-container').innerHTML=`
-                    <div class="pattern-box">
-                        <div class="pattern-title">🎉 완벽하게 분석했습니다!</div>
-                        <div class="pattern-val">${pattern}</div>
-                        <button class="primary-btn blue" style="margin-top:14px" onclick="nextAnalysis()">다음 문장 분석하기 ➔</button>
-                    </div>`;
-                recordAnalysis();
-            }
-        }
+    if(isOK) {
+        sfxOK(); btn.classList.add('correct'); qOK++;
+        unitStats[q.unit].ok++;
     } else {
-        sfxNG(); showCombo(false);
-        card.style.borderColor='var(--red)';
-        setTimeout(()=>{ card.style.borderColor=card.classList.contains('active')?'var(--main)':'#dbe4f0'; },600);
+        sfxNG(); btn.classList.add('wrong');
+        wrongList.push(q);
+        // show correct answer
+        for(const b of document.querySelectorAll('#g-opts .opt-btn')) {
+            if(b.innerText.includes(q.ans)) { b.classList.add('correct'); break; }
+        }
     }
+    setTimeout(()=>{ qIdx++; qIdx<qList.length ? loadQ() : finishQuiz(); }, 900);
 }
 
-function startStep2() {
-    aStage=2; aAnswers.fill(null); aActive=0;
-    document.getElementById('anal-step1-info').classList.remove('show');
-    document.getElementById('anal-result-container').innerHTML='';
-    const sb=document.getElementById('anal-stage-badge');
-    sb.innerText='2단계: 문장 성분 맞히기'; sb.className='stage-badge stage2';
-    // Reset chunk card visuals
-    document.querySelectorAll('.chunk-card').forEach((c,i)=>{
-        c.classList.remove('done','done-2','active');
-        if(i===0) c.classList.add('active');
-        document.getElementById('ca-'+i).innerText='?';
-        document.getElementById('ca-'+i).style.color='#a0aec0';
-    });
-    document.getElementById('anal-choices').style.display='flex';
-    buildChoices();
-}
+function finishQuiz(early=false) {
+    const tot = early ? qIdx : qList.length;
+    if(tot===0){resetQuiz();return;}
+    const sc=Math.round(qOK/tot*100);
+    updateEvo(qIdx, qList.length);
 
-function nextAnalysis() {
-    aIdx++;
-    if(aIdx<analysisList.length){ aStage=1; loadAnalysis(); }
-    else {
-        updateEvo('aevo-',analysisList.length,analysisList.length);
-        setTimeout(()=>{
-            document.getElementById('anal-quiz').style.display='none';
-            document.getElementById('anal-result').style.display='block';
-            fireConfetti();
-        },500);
-    }
-}
-function finishAnalysis(early=false){
-    if(aIdx===0&&early){resetAnalysis();return;}
-    updateEvo('aevo-',aIdx,analysisList.length);
     setTimeout(()=>{
-        document.getElementById('anal-quiz').style.display='none';
-        document.getElementById('anal-result').style.display='block';
-        if(!early) fireConfetti();
+        document.getElementById('g-quiz').style.display='none';
+        document.getElementById('g-result').style.display='block';
+
+        // emoji & score
+        const em=document.getElementById('g-res-e');
+        em.innerText = sc>=90?'🐉✨':sc>=70?'🐲':sc>=50?'🦖':'🥚💦';
+        const sd=document.getElementById('g-score');
+        sd.innerText=sc+'점';
+        sd.style.color=sc>=90?'var(--main)':sc>=70?'#d97706':'var(--red)';
+        document.getElementById('g-detail').innerText=`정답: ${qOK}개 / ${tot}문항`;
+        const pm=document.getElementById('g-pct-msg');
+        pm.innerText = sc>=90?'🎉 완벽합니다! 수리나무 마스터!':sc>=70?'👍 잘했어요! 조금만 더!':'💪 다시 한번 도전해봐요!';
+        pm.style.color = sc>=90?'var(--green)':sc>=70?'#d97706':'var(--red)';
+
+        // unit breakdown
+        const bdDiv=document.getElementById('g-breakdown');
+        bdDiv.innerHTML='<h3>📊 Unit별 성적</h3>';
+        Object.entries(unitStats).forEach(([unit,st])=>{
+            if(st.total===0) return;
+            const pct=Math.round(st.ok/st.total*100);
+            bdDiv.insertAdjacentHTML('beforeend',`
+                <div class="bd-row">
+                    <span style="min-width:70px">${unit}</span>
+                    <div class="bd-bar-bg"><div class="bd-bar" style="width:${pct}%"></div></div>
+                    <span class="bd-score">${st.ok}/${st.total}</span>
+                </div>`);
+        });
+
+        // wrong review
+        const retryBtn=document.getElementById('retry-btn');
+        if(wrongList.length>0) {
+            const wSec=document.getElementById('g-wrong-list');
+            wSec.style.display='block';
+            const wItems=document.getElementById('g-wrong-items');
+            wItems.innerHTML='';
+            wrongList.forEach(q=>{
+                wItems.insertAdjacentHTML('beforeend',`
+                    <div class="wrong-item">
+                        <div class="wrong-q">${q.q.replace('___','( ? )')}</div>
+                        <div class="wrong-ans">정답: <b>${q.ans}</b></div>
+                    </div>`);
+            });
+            retryBtn.style.display='block';
+        } else {
+            retryBtn.style.display='none';
+            document.getElementById('g-wrong-list').style.display='none';
+        }
+
+        saveHistory(sc, qOK, tot);
+        if(!early && sc>=90) boom();
     },500);
 }
-function resetAnalysis(){ document.getElementById('anal-result').style.display='none'; document.getElementById('anal-intro').style.display='block'; }
-function recordAnalysis(){
+
+function retryWrong() {
+    if(wrongList.length===0) return;
+    startQuiz([...wrongList]);
+}
+
+function resetQuiz() {
+    document.getElementById('g-result').style.display='none';
+    document.getElementById('g-intro').style.display='block';
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+function saveHistory(sc, ok, tot) {
     const dk=todayKey();
-    let h=JSON.parse(localStorage.getItem('suri_anal_hist')||'{}');
-    if(!h[dk]) h[dk]={count:0}; h[dk].count++;
-    localStorage.setItem('suri_anal_hist',JSON.stringify(h));
+    let arr=JSON.parse(localStorage.getItem('go1_hist')||'[]');
+    arr.unshift({date:dk, score:sc, ok, tot});
+    if(arr.length>15) arr=arr.slice(0,15);
+    localStorage.setItem('go1_hist',JSON.stringify(arr));
 }
 
-// ============================================================
-// 4. HISTORY
-// ============================================================
-function renderHistory(){
+function renderHistory() {
     const div=document.getElementById('hist-list'); div.innerHTML='';
-    // Word
-    div.insertAdjacentHTML('beforeend','<div class="hist-category">📝 단어 테스트 성적</div>');
-    const wh=JSON.parse(localStorage.getItem('suri_word')||'[]');
-    if(!wh.length) div.insertAdjacentHTML('beforeend','<p style="color:#a0aec0;font-size:13px">기록 없음</p>');
-    else wh.slice(0,3).forEach(r=>{
+    const arr=JSON.parse(localStorage.getItem('go1_hist')||'[]');
+    if(!arr.length) { div.innerHTML='<p style="color:#a0aec0;font-size:13px;margin-top:10px">기록 없음</p>'; return; }
+    div.insertAdjacentHTML('beforeend','<div class="hist-category">📝 Grammar Only 1 성적</div>');
+    arr.slice(0,10).forEach(r=>{
         const st=r.score>=90?'<span class="stamp">마스터 🐉</span>':'';
-        div.insertAdjacentHTML('beforeend',`<div class="hist-card"><div><div class="hist-date">${r.date}</div><div class="hist-score">${r.score}점 <span style="font-size:13px;color:#a0aec0">(${r.correct}/${r.total})</span></div></div>${st}</div>`);
+        div.insertAdjacentHTML('beforeend',`
+            <div class="hist-card">
+                <div>
+                    <div class="hist-date">${fmtDate(r.date)}</div>
+                    <div class="hist-score-text">${r.score}점 <span style="font-size:12px;color:#a0aec0">(${r.ok}/${r.tot})</span></div>
+                </div>
+                ${st}
+            </div>`);
     });
-    // Dict
-    div.insertAdjacentHTML('beforeend','<div class="hist-category">🎧 영작 달성도</div>');
-    const dh=JSON.parse(localStorage.getItem('suri_dict_hist')||'{}');
-    const dkeys=Object.keys(dh).sort((a,b)=>new Date(b)-new Date(a));
-    if(!dkeys.length) div.insertAdjacentHTML('beforeend','<p style="color:#a0aec0;font-size:13px">기록 없음</p>');
-    else dkeys.slice(0,3).forEach(k=>{
-        const st=dh[k].count>=10?'<span class="stamp">멋진 진화 🐉</span>':'';
-        div.insertAdjacentHTML('beforeend',`<div class="hist-card"><div><div class="hist-date">${fmtKey(k)}</div><div class="hist-score">${dh[k].count}문장 성공</div></div>${st}</div>`);
-    });
-    // Analysis
-    div.insertAdjacentHTML('beforeend','<div class="hist-category">🧩 문장 분석 달성도</div>');
-    const ah=JSON.parse(localStorage.getItem('suri_anal_hist')||'{}');
-    const akeys=Object.keys(ah).sort((a,b)=>new Date(b)-new Date(a));
-    if(!akeys.length) div.insertAdjacentHTML('beforeend','<p style="color:#a0aec0;font-size:13px">기록 없음</p>');
-    else akeys.slice(0,3).forEach(k=>{
-        const st=ah[k].count>=10?'<span class="stamp">분석 마스터 🐉</span>':'';
-        div.insertAdjacentHTML('beforeend',`<div class="hist-card"><div><div class="hist-date">${fmtKey(k)}</div><div class="hist-score">${ah[k].count}문장 분석완료</div></div>${st}</div>`);
-    });
-}
-
-// ============================================================
-// 5. REVIEW
-// ============================================================
-function renderReview(){
-    const div=document.getElementById('review-list'); div.innerHTML='';
-    const arr=JSON.parse(localStorage.getItem('suri_wrong')||'[]');
-    if(!arr.length){ div.innerHTML='<div style="padding:18px;text-align:center;color:var(--green);font-weight:800;background:#f0fff4;border-radius:10px">🎉 오답이 없습니다! 완벽해요!</div>'; return; }
-    arr.forEach((w,i)=>{
-        div.insertAdjacentHTML('beforeend',`<div class="wrong-item"><div><div class="wrong-en">${w.en}</div><div class="wrong-ko">${w.ko}</div></div><button class="del-btn" onclick="delWrong(${i})">외웠음 ✓</button></div>`);
-    });
-}
-function delWrong(i){
-    let arr=JSON.parse(localStorage.getItem('suri_wrong')||'[]');
-    arr.splice(i,1); localStorage.setItem('suri_wrong',JSON.stringify(arr));
-    renderReview();
-}
-function clearWrong(){
-    if(confirm('오답 도감을 전부 비울까요?')){ localStorage.removeItem('suri_wrong'); renderReview(); }
 }
 </script>
 </body>
