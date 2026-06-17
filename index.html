@@ -1182,7 +1182,7 @@ function resetWord(){
   document.getElementById("word-result").style.display="none";
   document.getElementById("word-intro").style.display="block";
 }
-let dIdx=0,isLoop=false,loopTimer=null,spIdx=0,dragChip=null,dragMoved=false,dragStartX=0,dragStartY=0;
+let dIdx=0,isLoop=false,loopTimer=null,spIdx=0,dragChip=null,dragMoved=false,dragStartX=0,dragStartY=0,chipSeq=0,suppressClickUntil=0;
 const speeds=[.8,.64,.52],speedLabels=["보통 속도","느리게","아주 느리게"];
 function loadDict(autoPlay=false){
   stopAudio();
@@ -1196,13 +1196,15 @@ function loadDict(autoPlay=false){
   scramble.innerHTML="";
   answer.style.background="var(--soft)";
   answer.style.borderColor="var(--main)";
-  shuffle(s.en.split(" ")).forEach((word,i)=>{
+  shuffle(s.en.split(" ")).forEach((word)=>{
     const chip=document.createElement("button");
     chip.className="word-chip";
-    chip.innerText=word;
+    chip.type="button";
+    chip.textContent=word;
     chip.draggable=true;
-    chip.dataset.id=i;
-    chip.onclick=()=>moveChip(chip);
+    chip.dataset.id=`chip-${++chipSeq}`;
+    chip.dataset.word=word;
+    chip.onclick=(e)=>moveChip(e.currentTarget);
     chip.addEventListener("dragstart",startChipDrag);
     chip.addEventListener("dragend",endChipDrag);
     chip.addEventListener("pointerdown",startPointerDrag);
@@ -1218,7 +1220,7 @@ function startChipDrag(e){
   dragChip.classList.add("dragging");
   if(e.dataTransfer){
     e.dataTransfer.effectAllowed="move";
-    e.dataTransfer.setData("text/plain",dragChip.dataset.id||"word");
+    e.dataTransfer.setData("text/plain",dragChip.dataset.id);
   }
 }
 function endChipDrag(){
@@ -1278,6 +1280,7 @@ function pointerMove(e){
   if(area) insertChipAt(area,dragChip,e.clientX,e.clientY);
 }
 function endPointerDrag(e){
+  const wasDrag=dragMoved;
   if(dragChip){
     dragChip.releasePointerCapture?.(e.pointerId);
     dragChip.classList.remove("dragging");
@@ -1285,9 +1288,11 @@ function endPointerDrag(e){
   }
   dragChip=null;
   afterChipMove();
+  if(wasDrag) suppressClickUntil=Date.now()+450;
   setTimeout(()=>{dragMoved=false;},0);
 }
 function moveChip(chip){
+  if(Date.now()<suppressClickUntil) return;
   if(dragMoved) return;
   const answer=document.getElementById("answer-area");
   const scramble=document.getElementById("scramble-area");
@@ -1302,7 +1307,7 @@ function afterChipMove(){
 function checkDict(){
   initAudio();
   const answer=document.getElementById("answer-area");
-  const student=[...answer.children].map(x=>x.innerText).join(" ");
+  const student=[...answer.querySelectorAll(".word-chip")].map(x=>x.dataset.word||x.textContent).join(" ");
   const correct=sentenceList[dIdx].en;
   if(norm(student)===norm(correct)){
     okSound();
