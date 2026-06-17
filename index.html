@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>수리나무학원 - World Cup Museum Challenge</title>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <style>
 :root{
   --main:#0f8f4f;
@@ -521,41 +522,14 @@ body{
   font-weight:900;
   cursor:pointer;
   user-select:none;
-  touch-action:none;
+  touch-action:manipulation;
   box-shadow:0 3px 0 rgba(139,92,246,.18);
   transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
 }
 .word-chip.in-answer{background:#fff7df;border-color:#f59e0b}
 .word-chip:active,.word-chip.pressed{transform:translateY(2px);box-shadow:0 1px 0 rgba(139,92,246,.18)}
-.word-chip.dragging{
-  opacity:1;
-  position:relative;
-  z-index:10;
-  transform:scale(1.08);
-  border-color:#16a34a;
-  box-shadow:0 9px 18px rgba(22,163,74,.24);
-}
-.word-chip.drag-source{visibility:hidden}
-.word-placeholder{
-  display:inline-block;
-  border:2px dashed #16a34a;
-  border-radius:12px;
-  background:#dcfce7;
-  min-width:54px;
-  min-height:38px;
-  vertical-align:middle;
-}
-.drag-ghost{
-  position:fixed;
-  left:0;
-  top:0;
-  z-index:9999;
-  pointer-events:none;
-  opacity:1 !important;
-  transform:scale(1.08);
-  border-color:#16a34a !important;
-  box-shadow:0 14px 28px rgba(22,163,74,.28) !important;
-}
+.sortable-ghost{opacity:1!important;background:#dcfce7!important;border-color:#22c55e!important}
+.sortable-drag{opacity:1!important;background:var(--main)!important;color:white!important;border-color:var(--main2)!important;transform:scale(1.06)!important;box-shadow:0 10px 20px rgba(15,143,79,.25)!important}
 .audio-row{
   display:flex;
   gap:8px;
@@ -1213,7 +1187,7 @@ function resetWord(){
   document.getElementById("word-result").style.display="none";
   document.getElementById("word-intro").style.display="block";
 }
-let dIdx=0,isLoop=false,loopTimer=null,spIdx=0,dragChip=null,dragMoved=false,dragStartX=0,dragStartY=0,chipSeq=0,dragGhost=null,dragPlaceholder=null,dragOffsetX=0,dragOffsetY=0,dragLiftY=0;
+let dIdx=0,isLoop=false,loopTimer=null,spIdx=0,chipSeq=0;
 const speeds=[.8,.64,.52],speedLabels=["보통 속도","느리게","아주 느리게"];
 function loadDict(autoPlay=false){
   stopAudio();
@@ -1227,133 +1201,48 @@ function loadDict(autoPlay=false){
   scramble.innerHTML="";
   answer.style.background="var(--soft)";
   answer.style.borderColor="var(--main)";
-  shuffle(s.en.split(" ")).forEach((word)=>{
+  shuffle(s.en.split(" ").filter(Boolean)).forEach((word)=>{
     const chip=document.createElement("button");
     chip.className="word-chip";
     chip.type="button";
-    chip.textContent=word;
-    chip.draggable=false;
+    chip.innerText=word;
     chip.dataset.id=`chip-${++chipSeq}`;
     chip.dataset.word=word;
-    chip.addEventListener("pointerdown",startPointerDrag);
+    chip.onclick=function(){
+      if(this.parentElement.id==="scramble-area"){
+        answer.appendChild(this);
+        this.classList.add("in-answer");
+      }else{
+        scramble.appendChild(this);
+        this.classList.remove("in-answer");
+      }
+      afterChipMove();
+    };
     scramble.appendChild(chip);
   });
+  initDictSortables();
   if(autoPlay) startLoop();
 }
-function insertChipAt(area,chip,x,y){
-  const before=findInsertBefore(area,chip,x,y);
-  if(before) area.insertBefore(chip,before);
-  else area.appendChild(chip);
-  chip.classList.toggle("in-answer",area.id==="answer-area");
-}
-function findInsertBefore(area,chip,x,y){
-  const items=[...area.querySelectorAll(".word-chip:not(.drag-source)")].filter(el=>el!==chip);
-  for(const el of items){
-    const r=el.getBoundingClientRect();
-    const midY=r.top+r.height/2;
-    const midX=r.left+r.width/2;
-    if(y<midY || (y<=r.bottom && y>=r.top && x<midX)) return el;
-  }
-  return null;
-}
-function startPointerDrag(e){
-  if(e.button!==undefined && e.button!==0) return;
-  e.preventDefault();
-  e.stopPropagation();
-  dragChip=e.currentTarget;
-  dragMoved=false;
-  dragStartX=e.clientX;
-  dragStartY=e.clientY;
-  dragLiftY=e.pointerType==="mouse"?10:46;
-  dragChip.classList.add("pressed");
-  dragChip.setPointerCapture(e.pointerId);
-  dragChip.addEventListener("pointermove",pointerMove);
-  dragChip.addEventListener("pointerup",endPointerDrag,{once:true});
-  dragChip.addEventListener("pointercancel",endPointerDrag,{once:true});
-}
-function pointerMove(e){
-  if(!dragChip) return;
-  e.preventDefault();
-  if(Math.abs(e.clientX-dragStartX)+Math.abs(e.clientY-dragStartY)>6){
-    dragMoved=true;
-    dragChip.classList.remove("pressed");
-    if(!dragGhost) startFloatingDrag(e);
-  }
-  if(!dragMoved) return;
-  moveFloatingDrag(e);
-}
-function endPointerDrag(e){
-  e.preventDefault();
-  e.stopPropagation();
-  const chip=dragChip;
-  const wasDrag=dragMoved;
-  const wasCancelled=e.type==="pointercancel";
-  if(dragChip){
-    dragChip.releasePointerCapture?.(e.pointerId);
-    dragChip.classList.remove("pressed");
-    dragChip.classList.remove("dragging");
-    dragChip.removeEventListener("pointermove",pointerMove);
-  }
-  if(wasCancelled) cancelFloatingDrag(chip);
-  else if(wasDrag) finishFloatingDrag(chip);
-  else if(chip) moveChip(chip);
-  dragChip=null;
-  setTimeout(()=>{dragMoved=false;},0);
-}
-function startFloatingDrag(e){
-  const r=dragChip.getBoundingClientRect();
-  dragOffsetX=e.clientX-r.left;
-  dragOffsetY=e.clientY-r.top;
-  dragPlaceholder=document.createElement("span");
-  dragPlaceholder.className="word-placeholder";
-  dragPlaceholder.style.width=r.width+"px";
-  dragPlaceholder.style.height=r.height+"px";
-  dragChip.parentElement.insertBefore(dragPlaceholder,dragChip);
-  dragGhost=dragChip.cloneNode(true);
-  dragGhost.classList.add("drag-ghost");
-  dragGhost.style.width=r.width+"px";
-  dragGhost.style.height=r.height+"px";
-  document.body.appendChild(dragGhost);
-  dragChip.classList.add("drag-source");
-}
-function moveFloatingDrag(e){
-  if(dragGhost){
-    dragGhost.style.left=(e.clientX-dragOffsetX)+"px";
-    dragGhost.style.top=(e.clientY-dragOffsetY-dragLiftY)+"px";
-  }
-  const area=document.elementsFromPoint(e.clientX,e.clientY).find(el=>el.classList?.contains("answer-area")||el.classList?.contains("scramble-area"));
-  if(area && dragPlaceholder){
-    const before=findInsertBefore(area,dragPlaceholder,e.clientX,e.clientY);
-    if(before) area.insertBefore(dragPlaceholder,before);
-    else area.appendChild(dragPlaceholder);
-  }
-}
-function finishFloatingDrag(chip){
-  if(dragPlaceholder?.parentElement && chip){
-    dragPlaceholder.parentElement.insertBefore(chip,dragPlaceholder);
-    chip.classList.toggle("in-answer",chip.parentElement.id==="answer-area");
-  }
-  chip?.classList.remove("drag-source");
-  dragPlaceholder?.remove();
-  dragGhost?.remove();
-  dragPlaceholder=null;
-  dragGhost=null;
-  afterChipMove();
-}
-function cancelFloatingDrag(chip){
-  chip?.classList.remove("drag-source");
-  dragPlaceholder?.remove();
-  dragGhost?.remove();
-  dragPlaceholder=null;
-  dragGhost=null;
-}
-function moveChip(chip){
-  if(dragMoved) return;
+function initDictSortables(){
   const answer=document.getElementById("answer-area");
   const scramble=document.getElementById("scramble-area");
-  if(chip.parentElement===scramble){answer.appendChild(chip);chip.classList.add("in-answer");}
-  else{scramble.appendChild(chip);chip.classList.remove("in-answer");}
-  afterChipMove();
+  if(window._dictAnswerSortable) window._dictAnswerSortable.destroy();
+  if(window._dictScrambleSortable) window._dictScrambleSortable.destroy();
+  if(typeof Sortable==="undefined") return;
+  const opts={
+    group:"dict-words",
+    animation:280,
+    ghostClass:"sortable-ghost",
+    dragClass:"sortable-drag",
+    swapThreshold:.65,
+    onEnd:()=>{
+      [...answer.querySelectorAll(".word-chip")].forEach(chip=>chip.classList.add("in-answer"));
+      [...scramble.querySelectorAll(".word-chip")].forEach(chip=>chip.classList.remove("in-answer"));
+      afterChipMove();
+    }
+  };
+  window._dictAnswerSortable=new Sortable(answer,opts);
+  window._dictScrambleSortable=new Sortable(scramble,opts);
 }
 function afterChipMove(){
   const scramble=document.getElementById("scramble-area");
