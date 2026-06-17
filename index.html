@@ -535,6 +535,27 @@ body{
   border-color:#16a34a;
   box-shadow:0 9px 18px rgba(22,163,74,.24);
 }
+.word-chip.drag-source{visibility:hidden}
+.word-placeholder{
+  display:inline-block;
+  border:2px dashed #16a34a;
+  border-radius:12px;
+  background:#dcfce7;
+  min-width:54px;
+  min-height:38px;
+  vertical-align:middle;
+}
+.drag-ghost{
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:9999;
+  pointer-events:none;
+  opacity:1 !important;
+  transform:scale(1.08);
+  border-color:#16a34a !important;
+  box-shadow:0 14px 28px rgba(22,163,74,.28) !important;
+}
 .audio-row{
   display:flex;
   gap:8px;
@@ -1192,7 +1213,7 @@ function resetWord(){
   document.getElementById("word-result").style.display="none";
   document.getElementById("word-intro").style.display="block";
 }
-let dIdx=0,isLoop=false,loopTimer=null,spIdx=0,dragChip=null,dragMoved=false,dragStartX=0,dragStartY=0,chipSeq=0;
+let dIdx=0,isLoop=false,loopTimer=null,spIdx=0,dragChip=null,dragMoved=false,dragStartX=0,dragStartY=0,chipSeq=0,dragGhost=null,dragPlaceholder=null,dragOffsetX=0,dragOffsetY=0,dragLiftY=0;
 const speeds=[.8,.64,.52],speedLabels=["보통 속도","느리게","아주 느리게"];
 function loadDict(autoPlay=false){
   stopAudio();
@@ -1217,26 +1238,7 @@ function loadDict(autoPlay=false){
     chip.addEventListener("pointerdown",startPointerDrag);
     scramble.appendChild(chip);
   });
-  setupDropArea(answer);
-  setupDropArea(scramble);
   if(autoPlay) startLoop();
-}
-function setupDropArea(area){
-  area.ondragover=e=>{
-    e.preventDefault();
-    const chip=dragChip;
-    if(!chip) return;
-    insertChipAt(area,chip,e.clientX,e.clientY);
-  };
-  area.ondrop=e=>{
-    e.preventDefault();
-    const chip=dragChip;
-    if(!chip) return;
-    insertChipAt(area,chip,e.clientX,e.clientY);
-    chip.classList.remove("dragging");
-    dragChip=null;
-    afterChipMove();
-  };
 }
 function insertChipAt(area,chip,x,y){
   const before=findInsertBefore(area,chip,x,y);
@@ -1245,7 +1247,7 @@ function insertChipAt(area,chip,x,y){
   chip.classList.toggle("in-answer",area.id==="answer-area");
 }
 function findInsertBefore(area,chip,x,y){
-  const items=[...area.querySelectorAll(".word-chip")].filter(el=>el!==chip);
+  const items=[...area.querySelectorAll(".word-chip:not(.drag-source)")].filter(el=>el!==chip);
   for(const el of items){
     const r=el.getBoundingClientRect();
     const midY=r.top+r.height/2;
@@ -1255,11 +1257,14 @@ function findInsertBefore(area,chip,x,y){
   return null;
 }
 function startPointerDrag(e){
+  if(e.button!==undefined && e.button!==0) return;
   e.preventDefault();
+  e.stopPropagation();
   dragChip=e.currentTarget;
   dragMoved=false;
   dragStartX=e.clientX;
   dragStartY=e.clientY;
+  dragLiftY=e.pointerType==="mouse"?10:46;
   dragChip.classList.add("pressed");
   dragChip.setPointerCapture(e.pointerId);
   dragChip.addEventListener("pointermove",pointerMove);
@@ -1269,29 +1274,78 @@ function startPointerDrag(e){
 function pointerMove(e){
   if(!dragChip) return;
   e.preventDefault();
-  if(Math.abs(e.clientX-dragStartX)+Math.abs(e.clientY-dragStartY)>8){
+  if(Math.abs(e.clientX-dragStartX)+Math.abs(e.clientY-dragStartY)>6){
     dragMoved=true;
     dragChip.classList.remove("pressed");
-    dragChip.classList.add("dragging");
+    if(!dragGhost) startFloatingDrag(e);
   }
   if(!dragMoved) return;
-  const area=document.elementFromPoint(e.clientX,e.clientY)?.closest?.(".answer-area,.scramble-area");
-  if(area) insertChipAt(area,dragChip,e.clientX,e.clientY);
+  moveFloatingDrag(e);
 }
 function endPointerDrag(e){
   e.preventDefault();
+  e.stopPropagation();
   const chip=dragChip;
   const wasDrag=dragMoved;
+  const wasCancelled=e.type==="pointercancel";
   if(dragChip){
     dragChip.releasePointerCapture?.(e.pointerId);
     dragChip.classList.remove("pressed");
     dragChip.classList.remove("dragging");
     dragChip.removeEventListener("pointermove",pointerMove);
   }
-  dragChip=null;
-  if(wasDrag) afterChipMove();
+  if(wasCancelled) cancelFloatingDrag(chip);
+  else if(wasDrag) finishFloatingDrag(chip);
   else if(chip) moveChip(chip);
+  dragChip=null;
   setTimeout(()=>{dragMoved=false;},0);
+}
+function startFloatingDrag(e){
+  const r=dragChip.getBoundingClientRect();
+  dragOffsetX=e.clientX-r.left;
+  dragOffsetY=e.clientY-r.top;
+  dragPlaceholder=document.createElement("span");
+  dragPlaceholder.className="word-placeholder";
+  dragPlaceholder.style.width=r.width+"px";
+  dragPlaceholder.style.height=r.height+"px";
+  dragChip.parentElement.insertBefore(dragPlaceholder,dragChip);
+  dragGhost=dragChip.cloneNode(true);
+  dragGhost.classList.add("drag-ghost");
+  dragGhost.style.width=r.width+"px";
+  dragGhost.style.height=r.height+"px";
+  document.body.appendChild(dragGhost);
+  dragChip.classList.add("drag-source");
+}
+function moveFloatingDrag(e){
+  if(dragGhost){
+    dragGhost.style.left=(e.clientX-dragOffsetX)+"px";
+    dragGhost.style.top=(e.clientY-dragOffsetY-dragLiftY)+"px";
+  }
+  const area=document.elementsFromPoint(e.clientX,e.clientY).find(el=>el.classList?.contains("answer-area")||el.classList?.contains("scramble-area"));
+  if(area && dragPlaceholder){
+    const before=findInsertBefore(area,dragPlaceholder,e.clientX,e.clientY);
+    if(before) area.insertBefore(dragPlaceholder,before);
+    else area.appendChild(dragPlaceholder);
+  }
+}
+function finishFloatingDrag(chip){
+  if(dragPlaceholder?.parentElement && chip){
+    dragPlaceholder.parentElement.insertBefore(chip,dragPlaceholder);
+    chip.classList.toggle("in-answer",chip.parentElement.id==="answer-area");
+  }
+  chip?.classList.remove("drag-source");
+  dragPlaceholder?.remove();
+  dragGhost?.remove();
+  dragPlaceholder=null;
+  dragGhost=null;
+  afterChipMove();
+}
+function cancelFloatingDrag(chip){
+  chip?.classList.remove("drag-source");
+  dragPlaceholder?.remove();
+  dragGhost?.remove();
+  dragPlaceholder=null;
+  dragGhost=null;
 }
 function moveChip(chip){
   if(dragMoved) return;
