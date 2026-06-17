@@ -522,9 +522,19 @@ body{
   cursor:pointer;
   user-select:none;
   touch-action:none;
+  box-shadow:0 3px 0 rgba(139,92,246,.18);
+  transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
 }
 .word-chip.in-answer{background:#fff7df;border-color:#f59e0b}
-.word-chip.dragging{opacity:.45;transform:scale(1.04)}
+.word-chip:active,.word-chip.pressed{transform:translateY(2px);box-shadow:0 1px 0 rgba(139,92,246,.18)}
+.word-chip.dragging{
+  opacity:1;
+  position:relative;
+  z-index:10;
+  transform:scale(1.08);
+  border-color:#16a34a;
+  box-shadow:0 9px 18px rgba(22,163,74,.24);
+}
 .audio-row{
   display:flex;
   gap:8px;
@@ -1182,7 +1192,7 @@ function resetWord(){
   document.getElementById("word-result").style.display="none";
   document.getElementById("word-intro").style.display="block";
 }
-let dIdx=0,isLoop=false,loopTimer=null,spIdx=0,dragChip=null,dragMoved=false,dragStartX=0,dragStartY=0,chipSeq=0,suppressClickUntil=0;
+let dIdx=0,isLoop=false,loopTimer=null,spIdx=0,dragChip=null,dragMoved=false,dragStartX=0,dragStartY=0,chipSeq=0;
 const speeds=[.8,.64,.52],speedLabels=["보통 속도","느리게","아주 느리게"];
 function loadDict(autoPlay=false){
   stopAudio();
@@ -1201,12 +1211,9 @@ function loadDict(autoPlay=false){
     chip.className="word-chip";
     chip.type="button";
     chip.textContent=word;
-    chip.draggable=true;
+    chip.draggable=false;
     chip.dataset.id=`chip-${++chipSeq}`;
     chip.dataset.word=word;
-    chip.onclick=(e)=>moveChip(e.currentTarget);
-    chip.addEventListener("dragstart",startChipDrag);
-    chip.addEventListener("dragend",endChipDrag);
     chip.addEventListener("pointerdown",startPointerDrag);
     scramble.appendChild(chip);
   });
@@ -1214,30 +1221,16 @@ function loadDict(autoPlay=false){
   setupDropArea(scramble);
   if(autoPlay) startLoop();
 }
-function startChipDrag(e){
-  dragChip=e.currentTarget;
-  dragMoved=false;
-  dragChip.classList.add("dragging");
-  if(e.dataTransfer){
-    e.dataTransfer.effectAllowed="move";
-    e.dataTransfer.setData("text/plain",dragChip.dataset.id);
-  }
-}
-function endChipDrag(){
-  if(dragChip) dragChip.classList.remove("dragging");
-  dragChip=null;
-  setTimeout(()=>{dragMoved=false;},0);
-}
 function setupDropArea(area){
   area.ondragover=e=>{
     e.preventDefault();
-    const chip=dragChip||document.querySelector(".word-chip.dragging");
+    const chip=dragChip;
     if(!chip) return;
     insertChipAt(area,chip,e.clientX,e.clientY);
   };
   area.ondrop=e=>{
     e.preventDefault();
-    const chip=dragChip||document.querySelector(".word-chip.dragging");
+    const chip=dragChip;
     if(!chip) return;
     insertChipAt(area,chip,e.clientX,e.clientY);
     chip.classList.remove("dragging");
@@ -1262,12 +1255,12 @@ function findInsertBefore(area,chip,x,y){
   return null;
 }
 function startPointerDrag(e){
-  if(e.pointerType==="mouse") return;
+  e.preventDefault();
   dragChip=e.currentTarget;
   dragMoved=false;
   dragStartX=e.clientX;
   dragStartY=e.clientY;
-  dragChip.classList.add("dragging");
+  dragChip.classList.add("pressed");
   dragChip.setPointerCapture(e.pointerId);
   dragChip.addEventListener("pointermove",pointerMove);
   dragChip.addEventListener("pointerup",endPointerDrag,{once:true});
@@ -1275,24 +1268,32 @@ function startPointerDrag(e){
 }
 function pointerMove(e){
   if(!dragChip) return;
-  if(Math.abs(e.clientX-dragStartX)+Math.abs(e.clientY-dragStartY)>8) dragMoved=true;
+  e.preventDefault();
+  if(Math.abs(e.clientX-dragStartX)+Math.abs(e.clientY-dragStartY)>8){
+    dragMoved=true;
+    dragChip.classList.remove("pressed");
+    dragChip.classList.add("dragging");
+  }
+  if(!dragMoved) return;
   const area=document.elementFromPoint(e.clientX,e.clientY)?.closest?.(".answer-area,.scramble-area");
   if(area) insertChipAt(area,dragChip,e.clientX,e.clientY);
 }
 function endPointerDrag(e){
+  e.preventDefault();
+  const chip=dragChip;
   const wasDrag=dragMoved;
   if(dragChip){
     dragChip.releasePointerCapture?.(e.pointerId);
+    dragChip.classList.remove("pressed");
     dragChip.classList.remove("dragging");
     dragChip.removeEventListener("pointermove",pointerMove);
   }
   dragChip=null;
-  afterChipMove();
-  if(wasDrag) suppressClickUntil=Date.now()+450;
+  if(wasDrag) afterChipMove();
+  else if(chip) moveChip(chip);
   setTimeout(()=>{dragMoved=false;},0);
 }
 function moveChip(chip){
-  if(Date.now()<suppressClickUntil) return;
   if(dragMoved) return;
   const answer=document.getElementById("answer-area");
   const scramble=document.getElementById("scramble-area");
